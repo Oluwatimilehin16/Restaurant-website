@@ -1,5 +1,6 @@
 <?php
 require_once 'config.php';
+require_once 'cloudinary_config.php'; // Add this line
 
 // Enable error reporting for debugging
 error_reporting(E_ALL);
@@ -20,8 +21,8 @@ try {
     $conn = getDBConnection();
     $conn->begin_transaction();
 
-    // Handle base64 image data
-    $imagePath = null;
+    // Handle base64 image data and upload to Cloudinary
+    $imageUrl = null;
     if (!empty($data['imageData'])) {
         $imageData = $data['imageData'];
         
@@ -48,23 +49,25 @@ try {
                 throw new Exception("Image file too large. Maximum size is 5MB");
             }
             
-            // Generate filename and save
-            $fileName = time() . "_menu_item." . $imageType;
+            // Upload directly to Cloudinary from base64
+            $cld = cloudinary();
+            $publicId = 'menu_items/' . time() . '_menu_item';
             
-            // Ensure upload directory exists
-            if (!is_dir(UPLOAD_DIR)) {
-                if (!mkdir(UPLOAD_DIR, 0755, true)) {
-                    throw new Exception("Failed to create upload directory");
-                }
+            try {
+                $uploadResponse = $cld->uploadApi()->upload($imageData, [
+                    'public_id' => $publicId,
+                    'folder' => 'menu_items',
+                    'overwrite' => true,
+                    'resource_type' => 'image'
+                ]);
+                
+                // Store the Cloudinary URL
+                $imageUrl = $uploadResponse['secure_url'];
+                
+            } catch (Exception $uploadError) {
+                throw new Exception("Cloudinary upload failed: " . $uploadError->getMessage());
             }
             
-            $destPath = UPLOAD_DIR . $fileName;
-            
-            if (!file_put_contents($destPath, $imageContent)) {
-                throw new Exception("Failed to save image file");
-            }
-            
-            $imagePath = 'uploads/menu_items/' . $fileName;
         } else {
             throw new Exception("Invalid image data format");
         }
@@ -89,7 +92,7 @@ try {
     $prepTime         = !empty($data['prepTime']) ? intval($data['prepTime']) : null;
     $servingSize      = !empty($data['servingSize']) ? $data['servingSize'] : null;
 
-    // Insert into menu_items
+    // Insert into menu_items - using image_url instead of image_path
     $stmt = $conn->prepare("
         INSERT INTO menu_items 
         (item_name, category, short_description, full_description, base_price, prep_time, serving_size, image_path) 
@@ -105,7 +108,7 @@ try {
         $data['basePrice'],
         $prepTime,
         $servingSize,
-        $imagePath
+        $imageUrl  // Changed from $imagePath
     );
     
     $stmt->execute();
@@ -210,7 +213,7 @@ try {
         "success" => true,
         "message" => "Menu item saved successfully!",
         "menuItemId" => $menuItemId,
-        "imagePath" => $imagePath
+        "imageUrl" => $imageUrl  // Changed from imagePath
     ]);
 
 } catch (Exception $e) {

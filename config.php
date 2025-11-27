@@ -1,16 +1,17 @@
 <?php
-// config.php - Database configuration
+// config.php - Database configuration using ONLY environment variables
 
-// Database credentials
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root'); // Change to your database username
-define('DB_PASS', ''); // Change to your database password
-define('DB_NAME', 'brioche_brew');
+// Database credentials from environment
+define('DB_HOST', getenv('DB_HOST'));
+define('DB_USER', getenv('DB_USER'));
+define('DB_PASS', getenv('DB_PASS'));
+define('DB_NAME', getenv('DB_NAME'));
+define('DB_PORT', getenv('DB_PORT'));
 
 // Create connection
 function getDBConnection() {
-    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
-    
+    $conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME, DB_PORT);
+
     // Check connection
     if ($conn->connect_error) {
         die(json_encode([
@@ -18,10 +19,10 @@ function getDBConnection() {
             'message' => 'Database connection failed: ' . $conn->connect_error
         ]));
     }
-    
-    // Set charset to utf8mb4 for emoji support
+
+    // Set charset
     $conn->set_charset("utf8mb4");
-    
+
     return $conn;
 }
 
@@ -34,7 +35,10 @@ if (!file_exists(UPLOAD_DIR)) {
 }
 
 // Allowed image types
-define('ALLOWED_TYPES', ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp']);
+define('ALLOWED_TYPES', [
+    'image/jpeg', 'image/jpg', 'image/png',
+    'image/gif', 'image/webp'
+]);
 
 // Max file size (5MB)
 define('MAX_FILE_SIZE', 5 * 1024 * 1024);

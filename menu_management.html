@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Management - Brioche & Brew</title>
+     <link href="css/menu_management.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-toggle" onclick="toggleSidebar()">☰</button>
+
+    <!-- Sidebar -->
+        <div class="sidebar"  id="sidebar">
+        <div class="logo-section">
+            <div class="logo-placeholder">
+                <img src="./image/logo.png" alt="Brioche & Brew Logo">
+            </div>
+            <div class="brand-name">Brioche & Brew</div>
+            <div class="brand-tagline">Order Management</div>
+        </div>
+
+        <div class="sidebar-nav">
+            <a href="orders_dashboard.html" class="nav-item">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </a>
+            <a href="menu_management.html" class="nav-item active">
+                <span class="nav-icon">🍽️</span>
+                <span>Manage Menu</span>
+            </a>
+            <a href="menucustomize.html" class="nav-item">
+                <span class="nav-icon">➕</span>
+                <span>Add New Item</span>
+            </a>
+            <a href="statistics.html" class="nav-item">
+                <span class="nav-icon">📈</span>
+                <span>Statistics</span>
+            </a>
+            
+             <a href="admin_reservations.html" class="nav-item">
+                <span class="nav-icon">📅</span>
+                <span>Reservations</span>
+             </a>
+        </div>
+
+        <div class="sidebar-footer">
+            © 2024 Brioche & Brew<br>All rights reserved
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <div class="top-header">
+            <div>
+                <h1 class="page-title">🍽️ Menu Management</h1>
+                <p class="page-subtitle">View, edit, and manage your menu items</p>
+            </div>
+            <div class="header-actions">
+                <a href="menucustomize.html" class="action-btn">
+                    ➕ Add New Item
+                </a>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <div class="filters-section">
+                <div class="search-box">
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search menu items by name...">
+                </div>
+                <div class="category-filters">
+                    <button class="filter-btn active" data-category="">All Categories</button>
+                    <button class="filter-btn" data-category="breakfast">Breakfast</button>
+                    <button class="filter-btn" data-category="sandwiches">Sandwiches</button>
+                    <button class="filter-btn" data-category="mains">Mains</button>
+                    <button class="filter-btn" data-category="coffee">Coffee</button>
+                    <button class="filter-btn" data-category="drinks">Drinks</button>
+                    <button class="filter-btn" data-category="Alcohol">Alcohol</button>
+                    <button class="filter-btn" data-category="sides">Sides</button>
+                    <button class="filter-btn" data-category="bakery">Bakery</button>
+                </div>
+            </div>
+
+            <div class="menu-grid" id="menuGrid">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <span>Loading menu items...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-content">
+            <h2>⚠️ Confirm Delete</h2>
+            <p>Are you sure you want to delete this menu item? This action cannot be undone.</p>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn btn-danger" onclick="confirmDelete()">Delete Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // Mobile sidebar toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('mobile-visible');
+        }
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 1024 && 
+                !sidebar.contains(e.target) && 
+                !toggle.contains(e.target) &&
+                sidebar.classList.contains('mobile-visible')) {
+                sidebar.classList.remove('mobile-visible');
+            }
+        });
+    </script>
+
+    <!-- Your existing menu management JavaScript -->
+    <script src="menu_management.js"></script>
+</body>
+</html>

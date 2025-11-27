@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Management - Brioche & Brew</title>
+     <link href="css/orders_dashboard.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo-section">
+            <div class="logo-placeholder">
+                <img src="./image/logo.png" alt="Brioche & Brew Logo">
+            </div>
+            <div class="brand-name">Brioche & Brew</div>
+            <div class="brand-tagline">Order Management</div>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-item active">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="window.location.href='menu_management.html'">
+                <span class="nav-icon">🍽️</span>
+                <span>Manage Menu</span>
+            </div>
+            <div class="nav-item" onclick="window.location.href='menucustomize.html'">
+                <span class="nav-icon">➕</span>
+                <span>Add New Item</span>
+            </div>
+            <div class="nav-item" onclick="window.location.href='statistics.html'">
+                <span class="nav-icon">📈</span>
+                <span>Statistics</span>
+            </div>
+             <div class="nav-item" onclick="window.location.href='admin_reservations.html'">
+                <span class="nav-icon">📅</span>
+                <span>Reservations</span>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            © 2024 Brioche & Brew<br>All rights reserved
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Header -->
+        <div class="top-header">
+            <div class="header-left">
+                <h1 class="page-title">Order Dashboard</h1>
+                <div class="notification-badge" id="notificationBadge">0</div>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn" onclick="toggleSound()" id="soundToggle">
+                    🔔 Sound ON
+                </button>
+                <button class="action-btn primary" onclick="loadOrders()">
+                    <span id="refreshIcon">🔄</span> Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Analytics Section -->
+            <div class="analytics-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span>📈</span> Sales Analytics
+                    </h2>
+                    <div class="time-filter">
+                        <button class="time-filter-btn active" data-period="today" onclick="filterByPeriod('today')">Today</button>
+                        <button class="time-filter-btn" data-period="week" onclick="filterByPeriod('week')">This Week</button>
+                        <button class="time-filter-btn" data-period="month" onclick="filterByPeriod('month')">This Month</button>
+                        <button class="time-filter-btn" data-period="all" onclick="filterByPeriod('all')">All Time</button>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon revenue">💰</div>
+                            <div class="stat-trend up" id="revenueTrend">
+                                ↑ <span id="revenuePercent">0%</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalRevenue">₦0</div>
+                        <div class="stat-label">Total Revenue</div>
+                        <div class="stat-sublabel" id="revenueSubtext">Today's earnings</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon orders">📋</div>
+                            <div class="stat-trend up" id="ordersTrend">
+                                ↑ <span id="ordersPercent">0%</span>
+                            </div>
+                        </div>
+                        <div class="stat-value" id="totalOrders">0</div>
+                        <div class="stat-label">Total Orders</div>
+                        <div class="stat-sublabel" id="ordersSubtext">Orders received</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon pending">⏳</div>
+                        </div>
+                        <div class="stat-value" id="pendingOrders">0</div>
+                        <div class="stat-label">Pending Orders</div>
+                        <div class="stat-sublabel">Awaiting preparation</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <div class="stat-icon completed">✅</div>
+                        </div>
+                        <div class="stat-value" id="completedOrders">0</div>
+                        <div class="stat-label">Completed</div>
+                        <div class="stat-sublabel" id="completedSubtext">Successfully delivered</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Orders Section -->
+            <div class="orders-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span>🔔</span> Live Orders
+                    </h2>
+                </div>
+
+                <div class="orders-controls">
+                    <div class="filter-tabs">
+                        <div class="filter-tab active" data-filter="all" onclick="filterOrders('all')">All Orders</div>
+                        <div class="filter-tab" data-filter="pending" onclick="filterOrders('pending')">Pending</div>
+                        <div class="filter-tab" data-filter="preparing" onclick="filterOrders('preparing')">Preparing</div>
+                        <div class="filter-tab" data-filter="ready" onclick="filterOrders('ready')">Ready</div>
+                        <div class="filter-tab" data-filter="dinein" onclick="filterOrders('dinein')">Dine-In</div>
+                        <div class="filter-tab" data-filter="delivery" onclick="filterOrders('delivery')">Delivery</div>
+                    </div>
+                    
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Search orders..." id="searchInput" oninput="searchOrders()">
+                        <span class="search-icon">🔍</span>
+                    </div>
+                </div>
+
+                <div class="orders-grid" id="ordersGrid">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>No Orders Yet</h3>
+                        <p>New orders will appear here in real-time</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <audio id="notificationSound" preload="auto">
+        <source src="data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuAy/DajT8IE2Kz6+OZTgoEQKXr7KtgFgo+leX0wngoDSZ7wvDUijYGF2Sx6d+WTgcIMZ3h8sV4KAskec3v15tECQ9fr+DooU8GCjSa4vK7diYGIm3D79yPPwcUYa/o5KBQAwszm+H0wnIjBiJ0xe7Xhz0FFmq06dyXSwYHMJzf8rx0IAMXebzq1pI6BRdpr+bfllADAC6Y3vO8cyIEFnG76teQOQYXZKzn46dWAwAsk97ytm0gBBVru+3ajDYDEV+t5+GeUgcDK5be8rNqHgQUarnq3I85BRBapuHsp1sIBC2X3++1ahoFJHe96NOLNgkOV7Dl56lfBwAmlt3yrWccBSlzvu/ZjTQIE1Sv5d+iVAgCJ5Hb8q5nHAUubcPz2JAyBhJRrObfpVcIAyed2fGpZBoFLW3D8NiMMQYSUavo4KdbBwInmtjzqmIfBS1uwvPVkDEFElSs5uGjWwYBKKDY8qphHgQtbsHy0o00CBVZ" type="audio/wav">
+    </audio>
+
+    <!-- Payment Method Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💳 Select Payment Method</h2>
+                <span class="close-modal" onclick="closePaymentModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p>Choose how the customer paid for order <strong id="modalOrderId"></strong>:</p>
+                <div class="payment-methods">
+                    <button class="payment-method-btn" onclick="completeOrderWithPayment('cash')">
+                        <span class="payment-icon">💵</span>
+                        <span class="payment-label">Cash</span>
+                    </button>
+                    <button class="payment-method-btn" onclick="completeOrderWithPayment('card')">
+                        <span class="payment-icon">💳</span>
+                        <span class="payment-label">Card</span>
+                    </button>
+                    <button class="payment-method-btn" onclick="completeOrderWithPayment('transfer')">
+                        <span class="payment-icon">🏦</span>
+                        <span class="payment-label">Bank Transfer</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="orders_dashboard.js"></script>
+    
+    <script>
+        let currentOrderIdForPayment = null;
+
+        // Override the updateOrderStatus function for completed status
+        const originalUpdateOrderStatus = window.updateOrderStatus;
+        
+        window.updateOrderStatus = async function(orderId, newStatus) {
+            if (newStatus === 'completed') {
+                // Show payment method modal
+                currentOrderIdForPayment = orderId;
+                document.getElementById('modalOrderId').textContent = '#' + orderId;
+                document.getElementById('paymentModal').style.display = 'flex';
+            } else {
+                // Call original function for other statuses
+                if (typeof originalUpdateOrderStatus === 'function') {
+                    await originalUpdateOrderStatus(orderId, newStatus);
+                }
+            }
+        };
+
+        function closePaymentModal() {
+            document.getElementById('paymentModal').style.display = 'none';
+            currentOrderIdForPayment = null;
+        }
+
+        async function completeOrderWithPayment(paymentMethod) {
+            if (!currentOrderIdForPayment) return;
+
+            try {
+                const response = await fetch('update_order_status.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        orderId: currentOrderIdForPayment,
+                        status: 'completed',
+                        paymentMethod: paymentMethod,
+                        paymentStatus: 'paid'
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showToast(`Order ${currentOrderIdForPayment} completed - Paid via ${paymentMethod}`, 'success');
+                    closePaymentModal();
+                    loadOrders();
+                } else {
+                    showToast('Failed to update order', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating order:', error);
+                showToast('Error updating order', 'error');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('paymentModal');
+            if (event.target === modal) {
+                closePaymentModal();
+            }
+        };
+    </script>
+
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .modal-header {
+            padding: 24px 30px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            margin: 0;
+            color: #333;
+            font-size: 1.5rem;
+        }
+
+        .close-modal {
+            font-size: 2rem;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.3s;
+            line-height: 1;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-body p {
+            margin-bottom: 24px;
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .payment-methods {
+            display: grid;
+            gap: 16px;
+        }
+
+        .payment-method-btn {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 24px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .payment-method-btn:hover {
+            background: linear-gradient(135deg, #8B0000 0%, #A52A2A 100%);
+            border-color: #8B0000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(139, 0, 0, 0.3);
+        }
+
+        .payment-method-btn:hover .payment-icon,
+        .payment-method-btn:hover .payment-label {
+            color: white;
+        }
+
+        .payment-icon {
+            font-size: 2rem;
+        }
+
+        .payment-label {
+            font-weight: 600;
+            color: #333;
+            transition: color 0.3s;
+        }
+    </style>
+</body>
+</html>

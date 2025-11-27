@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reservations Management - Brioche & Brew</title>
+    <link href="css/admin_reservations.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo-section">
+            <div class="logo-placeholder">
+                <img src="./image/logo.png" alt="Brioche & Brew Logo">
+            </div>
+            <div class="brand-name">Brioche & Brew</div>
+            <div class="brand-tagline">Reservations</div>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-item" onclick="window.location.href='orders_dashboard.html'">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+           
+            <div class="nav-item" onclick="window.location.href='menu_management.html'">
+                <span class="nav-icon">🍽️</span>
+                <span>Manage Menu</span>
+            </div>
+            <div class="nav-item" onclick="window.location.href='menucustomize.html'">
+                <span class="nav-icon">➕</span>
+                <span>Add New Item</span>
+            </div>
+            <div class="nav-item" onclick="window.location.href='statistics.html'">
+                <span class="nav-icon">📈</span>
+                <span>Statistics</span>
+            </div>
+
+             <div class="nav-item active" onclick="window.location.href='admin_reservations.html'">
+                <span class="nav-icon">📅</span>
+                <span>Reservations</span>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            © 2024 Brioche & Brew<br>All rights reserved
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Header -->
+        <div class="top-header">
+            <div class="header-left">
+                <h1 class="page-title">Reservations Management</h1>
+                <div class="notification-badge" id="notificationBadge">0</div>
+            </div>
+            <div class="header-actions">
+                <button class="action-btn" onclick="openBlockTableModal()">
+                    🚫 Block Table
+                </button>
+                <button class="action-btn" onclick="openWalkInModal()">
+                    👤 Walk-In
+                </button>
+                <button class="action-btn primary" onclick="loadReservations()">
+                    <span id="refreshIcon">🔄</span> Refresh
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Stats Section -->
+            <div class="stats-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span>📊</span> Today's Overview
+                    </h2>
+                    <div class="date-display" id="currentDate"></div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon today">📅</div>
+                        <div class="stat-value" id="todayReservations">0</div>
+                        <div class="stat-label">Today's Reservations</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon confirmed">✅</div>
+                        <div class="stat-value" id="confirmedCount">0</div>
+                        <div class="stat-label">Confirmed</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon seated">🪑</div>
+                        <div class="stat-value" id="seatedCount">0</div>
+                        <div class="stat-label">Currently Seated</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-icon upcoming">⏰</div>
+                        <div class="stat-value" id="upcomingCount">0</div>
+                        <div class="stat-label">Upcoming</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Reservations Section -->
+            <div class="reservations-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span>🎫</span> All Reservations
+                    </h2>
+                </div>
+
+                <div class="reservations-controls">
+                    <div class="filter-tabs">
+                        <div class="filter-tab active" data-filter="all" onclick="filterReservations('all')">All</div>
+                        <div class="filter-tab" data-filter="today" onclick="filterReservations('today')">Today</div>
+                        <div class="filter-tab" data-filter="upcoming" onclick="filterReservations('upcoming')">Upcoming</div>
+                        <div class="filter-tab" data-filter="confirmed" onclick="filterReservations('confirmed')">Confirmed</div>
+                        <div class="filter-tab" data-filter="seated" onclick="filterReservations('seated')">Seated</div>
+                        <div class="filter-tab" data-filter="completed" onclick="filterReservations('completed')">Completed</div>
+                    </div>
+                    
+                    <div class="space-filters">
+                        <select class="space-select" id="spaceFilter" onchange="filterBySpace()">
+                            <option value="all">All Spaces</option>
+                            <option value="indoor">Indoor Dining</option>
+                            <option value="outdoor">Outdoor Terrace</option>
+                            <option value="lounge">Work Lounge</option>
+                        </select>
+                    </div>
+
+                    <div class="search-box">
+                        <input type="text" class="search-input" placeholder="Search by name or phone..." id="searchInput" oninput="searchReservations()">
+                        <span class="search-icon">🔍</span>
+                    </div>
+                </div>
+
+                <div class="reservations-grid" id="reservationsGrid">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📭</div>
+                        <h3>No Reservations Yet</h3>
+                        <p>New reservations will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Walk-In Modal -->
+    <div id="walkInModal" class="modal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>👤 Add Walk-In Reservation</h2>
+                <span class="close-modal" onclick="closeWalkInModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="walkInForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Space <span class="required">*</span></label>
+                            <select id="walkInSpace" class="form-input" required onchange="loadAvailableTables()">
+                                <option value="">Select Space</option>
+                                <option value="indoor">Indoor Dining</option>
+                                <option value="outdoor">Outdoor Terrace</option>
+                                <option value="lounge">Work Lounge</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Table <span class="required">*</span></label>
+                            <select id="walkInTable" class="form-input" required>
+                                <option value="">Select table first...</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Date <span class="required">*</span></label>
+                            <input type="date" id="walkInDate" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Time <span class="required">*</span></label>
+                            <input type="time" id="walkInTime" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Customer Name <span class="required">*</span></label>
+                            <input type="text" id="walkInName" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number <span class="required">*</span></label>
+                            <input type="tel" id="walkInPhone" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="walkInEmail" class="form-input" placeholder="optional">
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeWalkInModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Add Reservation</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Block Table Modal -->
+    <div id="blockTableModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🚫 Block Table</h2>
+                <span class="close-modal" onclick="closeBlockTableModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="blockTableForm">
+                    <div class="form-group">
+                        <label>Space <span class="required">*</span></label>
+                        <select id="blockSpace" class="form-input" required>
+                            <option value="">Select Space</option>
+                            <option value="indoor">Indoor Dining</option>
+                            <option value="outdoor">Outdoor Terrace</option>
+                            <option value="lounge">Work Lounge</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Table ID <span class="required">*</span></label>
+                        <input type="text" id="blockTableId" class="form-input" placeholder="e.g., I1, O5, L3" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Block Date <span class="required">*</span></label>
+                        <input type="date" id="blockDate" class="form-input" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Start Time <span class="required">*</span></label>
+                            <input type="time" id="blockStartTime" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label>End Time <span class="required">*</span></label>
+                            <input type="time" id="blockEndTime" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Reason</label>
+                        <textarea id="blockReason" class="form-textarea" placeholder="e.g., Maintenance, Reserved for event"></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeBlockTableModal()">Cancel</button>
+                        <button type="submit" class="btn btn-primary">Block Table</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="admin_reservations.js"></script>
+</body>
+</html>

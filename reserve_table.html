@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reserve a Table - Brioche & Brew</title>
+    <link rel="stylesheet" href="css/reserve_table.css">
+</head>
+<body>
+    <div class="reservation-header">
+        <div class="header-top">
+            <a href="index.html" class="back-arrow">←</a>
+            <div class="logo-circle">
+                <img src="./image/logo.png" alt="Brioche & Brew Logo" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+        </div>
+        <div class="header-title">Reserve Your Table</div>
+    </div>
+
+    <div class="container">
+        <div class="step-indicator">
+            <div class="step active" data-step="1">
+                <div class="step-circle">1</div>
+                <div class="step-label">Choose Space</div>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-circle">2</div>
+                <div class="step-label">Date & Time</div>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-circle">3</div>
+                <div class="step-label">Select Table</div>
+            </div>
+            <div class="step" data-step="4">
+                <div class="step-circle">4</div>
+                <div class="step-label">Confirm</div>
+            </div>
+        </div>
+
+        <!-- STEP 1: Choose Space -->
+        <div class="section active" id="step1">
+            <div class="intro-text">
+                <h2>Choose Your Perfect Space</h2>
+                <p>Select the dining experience that suits your occasion</p>
+            </div>
+
+            <div class="spaces-grid">
+                <div class="space-card" onclick="selectSpace('indoor')">
+                    <div class="space-image-wrapper">
+                        <img src="./image/indoor-dining.jpeg" alt="Indoor Dining" class="space-image">
+                        <div class="space-badge">2-4 Seats</div>
+                    </div>
+                    <div class="space-content">
+                        <div class="space-name">Indoor Dining</div>
+                        <div class="space-description">Elegant atmosphere with cozy seating, perfect for intimate gatherings</div>
+                        <div class="space-features">
+                            <div class="feature-badge">8 Tables</div>
+                            <div class="feature-badge">Climate Control</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-card" onclick="selectSpace('outdoor')">
+                    <div class="space-image-wrapper">
+                        <img src="./image/outdoor.jpeg" alt="Outdoor Terrace" class="space-image">
+                        <div class="space-badge">2-6 Seats</div>
+                    </div>
+                    <div class="space-content">
+                        <div class="space-name">Outdoor Terrace</div>
+                        <div class="space-description">Beautiful garden setting with natural ambiance and fresh air</div>
+                        <div class="space-features">
+                            <div class="feature-badge">10 Tables</div>
+                            <div class="feature-badge">Garden Views</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-card" onclick="selectSpace('lounge')">
+                    <div class="space-image-wrapper">
+                        <img src="./image/work-lounge.jpeg" alt="Work Lounge" class="space-image">
+                        <div class="space-badge">4-8 Seats</div>
+                    </div>
+                    <div class="space-content">
+                        <div class="space-name">Work Lounge</div>
+                        <div class="space-description">Modern workspace perfect for meetings or casual dining</div>
+                        <div class="space-features">
+                            <div class="feature-badge">6 Tables</div>
+                            <div class="feature-badge">High-Speed WiFi</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: Date & Time Selection -->
+        <div class="section" id="step2">
+            <div class="intro-text">
+                <h2>Select Date & Time</h2>
+                <p>Choose when you'd like to dine with us</p>
+            </div>
+
+            <div class="table-selection-container">
+                <div class="date-time-selector">
+                    <div class="date-time-grid">
+                        <div class="input-group">
+                            <label>Date <span class="required">*</span></label>
+                            <input type="date" id="reservationDate" onchange="loadTableAvailability()">
+                        </div>
+                        <div class="input-group">
+                            <label>Time <span class="required">*</span></label>
+                            <input type="time" id="reservationTime" onchange="loadTableAvailability()">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="goToStep(1)">← Back</button>
+                    <button class="btn btn-primary" onclick="goToStep(3)" id="continueToTables" disabled style="opacity: 0.5;">Continue to Tables →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: Table Selection -->
+        <div class="section" id="step3">
+            <div class="intro-text">
+                <h2>Select Your Table</h2>
+                <p id="spaceNameDisplay"></p>
+            </div>
+
+            <div class="table-selection-container">
+                <div class="legend-container">
+                    <div class="legend-item">
+                        <div class="legend-box available"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box reserved"></div>
+                        <span>Reserved</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-box selected"></div>
+                        <span>Selected</span>
+                    </div>
+                </div>
+
+                <div id="tablesGrid" class="tables-grid"></div>
+
+                <div id="selectedTableInfo" style="display: none;" class="selected-table-info">
+                    <h3>Selected Table</h3>
+                    <p id="selectedTableDetails"></p>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="goToStep(2)">← Back</button>
+                    <button class="btn btn-primary" onclick="goToStep(4)" id="continueToConfirm" disabled style="opacity: 0.5;">Continue to Booking →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 4: Confirmation & Payment -->
+        <div class="section" id="step4">
+            <div class="form-container">
+                <div class="form-title">Complete Your Reservation</div>
+
+                <div class="reservation-summary">
+                    <h3 style="color: #8B0000; margin-bottom: 15px;">Reservation Details</h3>
+                    <div class="summary-row">
+                        <span>Space:</span>
+                        <strong id="summarySpace"></strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Table:</span>
+                        <strong id="summaryTable"></strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Date:</span>
+                        <strong id="summaryDate"></strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Time:</span>
+                        <strong id="summaryTime"></strong>
+                    </div>
+                    <div class="summary-row">
+                        <span>Capacity:</span>
+                        <strong id="summaryCapacity"></strong>
+                    </div>
+                </div>
+
+                <form id="reservationForm">
+                    <div class="form-group">
+                        <label class="form-label">Full Name <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="fullName" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Phone Number <span class="required">*</span></label>
+                        <input type="tel" class="form-input" id="phone" placeholder="+234" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Address <span class="required">*</span></label>
+                        <input type="email" class="form-input" id="email" required>
+                    </div>
+
+                    <div class="deposit-box">
+                        <div class="deposit-label">Reservation Deposit</div>
+                        <div class="deposit-amount">₦5,000</div>
+                        <div class="deposit-note">Non-refundable • Credited to your final bill</div>
+                    </div>
+
+                    <div class="checkbox-wrapper">
+                        <input type="checkbox" class="checkbox-input" id="agreeTerms" required>
+                        <label class="checkbox-label" for="agreeTerms">
+                            I understand the ₦5,000 deposit is non-refundable and will be credited to my bill. <span class="required">*</span>
+                        </label>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button type="button" class="btn btn-secondary" onclick="goToStep(3)">← Back</button>
+                        <button type="submit" class="btn btn-primary">Pay & Reserve →</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="reserve_table.js">
+       
+    </script>
+</body>
+</html>

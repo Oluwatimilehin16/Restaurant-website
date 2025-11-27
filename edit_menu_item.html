@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Menu Item - Brioche & Brew Admin</title>
+    <link rel="stylesheet" href="css/menucustomize.css">
+</head>
+<body>
+    <header class="admin-header">
+        <h1>Edit Menu Item</h1>
+        <p>Update your menu item details</p>
+        <div style="margin-top: 15px;">
+            <a href="menu_management.html" class="btn btn-secondary" style="display: inline-block; text-decoration: none;">← Back to Menu Management</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <form id="editMenuItemForm">
+            <input type="hidden" id="itemId">
+            
+            <div class="form-card">
+                <h2 class="section-title">Basic Information</h2>
+                <p class="section-description">Update the essential details about your menu item</p>
+                
+                <div class="form-row two-col">
+                    <div class="form-group">
+                        <label class="form-label" for="itemName">
+                            Item Name <span class="required-asterisk">*</span>
+                        </label>
+                        <input type="text" id="itemName" class="form-input" placeholder="e.g., Classic Avocado Toast" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="category">
+                            Category <span class="required-asterisk">*</span>
+                        </label>
+                        <select id="category" class="form-select" required>
+                            <option value="">Select Category</option>
+                            <option value="breakfast">Breakfast</option>
+                            <option value="sandwiches">Sandwiches</option>
+                            <option value="mains">Mains</option>
+                            <option value="coffee">Coffee</option>
+                            <option value="drinks">Drinks</option>
+                            <option value="Alcohol">Alcohol</option>
+                            <option value="sides">Sides</option>
+                            <option value="bakery">Bakery</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="description-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="shortDescription">
+                            Short Description <span class="required-asterisk">*</span>
+                        </label>
+                        <div class="form-hint">Brief description shown on the menu list (recommended: 60-120 characters)</div>
+                        <div class="description-note">
+                            <strong>📱 Menu List View:</strong> This appears under the item name when customers browse the menu
+                        </div>
+                        <textarea id="shortDescription" class="form-textarea short" required maxlength="150" placeholder="Choose from classic, berry, or chocolate chip varieties"></textarea>
+                        <div class="char-counter" id="shortCounter">0 / 150 characters</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="fullDescription">
+                            Full Description <span class="required-asterisk">*</span>
+                        </label>
+                        <div class="form-hint">Detailed description with ingredients, preparation, and presentation details</div>
+                        <div class="description-note">
+                            <strong>📄 Item Detail View:</strong> This appears when customers tap to view the full item details
+                        </div>
+                        <textarea id="fullDescription" class="form-textarea" required placeholder="Our signature avocado toast featuring perfectly ripe, hand-mashed avocados on thick-cut artisan bread. Topped with cherry tomatoes, olive oil, and sea salt..."></textarea>
+                        <div class="char-counter" id="fullCounter">0 characters</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">What Makes It Special?</label>
+                        <div class="form-hint">Add 3-5 key features or highlights (shown as bullet points on the detail page)</div>
+                        <div class="special-features-list" id="specialFeaturesList">
+                        </div>
+                        <button type="button" class="add-btn" onclick="addFeature()">+ Add Feature</button>
+                    </div>
+                </div>
+
+                <div class="form-row three-col">
+                    <div class="form-group">
+                        <label class="form-label" for="basePrice">
+                            Base Price (₦) <span class="required-asterisk">*</span>
+                        </label>
+                        <input type="number" id="basePrice" class="form-input" step="0.01" placeholder="5000" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="prepTime">Prep Time (minutes)</label>
+                        <input type="number" id="prepTime" class="form-input" placeholder="15">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="servingSize">Serving Size</label>
+                        <input type="text" id="servingSize" class="form-input" placeholder="1 person">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Item Image</label>
+                        <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('itemImage').click()">
+                            <div style="font-size: 3rem; color: #8B0000;">📷</div>
+                            <p style="margin-top: 10px; font-size: 1.1rem; color: #666;">Click to change image</p>
+                            <p style="font-size: 0.9rem; color: #999; margin-top: 5px;">Leave blank to keep current image</p>
+                            <img id="imagePreview" class="image-preview" alt="Preview">
+                            <input type="file" id="itemImage" accept="image/*" style="position: absolute; opacity: 0; pointer-events: none;">
+                        </div>
+                        <input type="hidden" id="existingImagePath">
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h2 class="section-title">Availability & Dietary Information</h2>
+                <p class="section-description">Set when this item is available and dietary tags</p>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Available Days</label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px;">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="monday" class="checkbox-input">
+                                <label for="monday">Monday</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="tuesday" class="checkbox-input">
+                                <label for="tuesday">Tuesday</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="wednesday" class="checkbox-input">
+                                <label for="wednesday">Wednesday</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="thursday" class="checkbox-input">
+                                <label for="thursday">Thursday</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="friday" class="checkbox-input">
+                                <label for="friday">Friday</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="saturday" class="checkbox-input">
+                                <label for="saturday">Saturday</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="sunday" class="checkbox-input">
+                                <label for="sunday">Sunday</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Dietary Restrictions & Tags</label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 10px;">
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="vegetarian" class="checkbox-input">
+                                <label for="vegetarian">🥬 Vegetarian</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="vegan" class="checkbox-input">
+                                <label for="vegan">🌱 Vegan</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="glutenFree" class="checkbox-input">
+                                <label for="glutenFree">🌾 Gluten Free</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="dairyFree" class="checkbox-input">
+                                <label for="dairyFree">🥛 Dairy Free</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="nutFree" class="checkbox-input">
+                                <label for="nutFree">🥜 Nut Free</label>
+                            </div>
+                            <div class="checkbox-group">
+                                <input type="checkbox" id="spicy" class="checkbox-input">
+                                <label for="spicy">🌶️ Spicy</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h2 class="section-title">Customizations (Optional)</h2>
+                <p class="section-description">Add options customers can choose when ordering</p>
+                
+                <div class="customization-section" id="customizationSection">
+                    <p style="text-align: center; color: #666; font-style: italic;">No customizations yet. Skip this if the item has no options.</p>
+                </div>
+                <button type="button" class="add-btn" onclick="addCustomizationGroup()">+ Add a Question</button>
+            </div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <button type="submit" class="btn btn-primary">💾 Update Menu Item</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script src="edit_menu_item.js"></script>
+</body>
+</html>

@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Management - Brioche & Brew Admin</title>
+    <link href="css/menucustomize.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" onclick="toggleMobileMenu()">☰</button>
+    
+    <!-- Sidebar Overlay -->
+    <div class="sidebar-overlay" onclick="toggleMobileMenu()"></div>
+
+  <div class="sidebar">
+        <div class="logo-section">
+            <div class="logo-placeholder">
+                <img src="./image/logo.png" alt="Brioche & Brew Logo">
+            </div>
+            <div class="brand-name">Brioche & Brew</div>
+            <div class="brand-tagline">Order Management</div>
+        </div>
+
+               <div class="sidebar-nav">
+            <div class="nav-item" onclick="window.location.href='orders_dashboard.html'">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="window.location.href='menu_management.html'">
+                <span class="nav-icon">🍽️</span>
+                <span>Manage Menu</span>
+            </div>
+            <div class="nav-item active" onclick="window.location.href='menucustomize.html'">
+                <span class="nav-icon">➕</span>
+                <span>Add New Item</span>
+            </div>
+            <div class="nav-item" onclick="window.location.href='statistics.html'">
+                <span class="nav-icon">📈</span>
+                <span>Statistics</span>
+            </div>
+             <div class="nav-item" onclick="window.location.href='admin_reservations.html'">
+                <span class="nav-icon">📅</span>
+                <span>Reservations</span>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            © 2024 Brioche & Brew<br>All rights reserved
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="admin-header">
+            <h1>Menu Management</h1>
+            <p>Create and customize your restaurant's menu items</p>
+            <a href="menu_management.html" class="btn-secondary">← View All Menu Items</a>
+        </header>
+
+        <div class="container">
+            <!-- Progress Indicator -->
+            <div class="progress-container">
+                <div class="progress-step active" data-step="1">
+                    <div class="step-number">1</div>
+                    <div class="step-label">Basic Info</div>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" data-step="2">
+                    <div class="step-number">2</div>
+                    <div class="step-label">Pricing & Image</div>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" data-step="3">
+                    <div class="step-number">3</div>
+                    <div class="step-label">Availability</div>
+                </div>
+                <div class="progress-line"></div>
+                <div class="progress-step" data-step="4">
+                    <div class="step-number">4</div>
+                    <div class="step-label">Customizations</div>
+                </div>
+            </div>
+
+            <form id="menuItemForm">
+                <!-- Step 1: Basic Information -->
+                <div class="form-step active" data-step="1">
+                    <div class="form-card">
+                        <h2 class="section-title">Basic Information</h2>
+                        <p class="section-description">Let's start with the essentials about this menu item</p>
+                        
+                        <div class="form-row two-col">
+                        <div class="form-group">
+    <label class="form-label" for="itemName">
+        Item Name <span class="required-asterisk">*</span>
+    </label>
+    <input type="text" id="itemName" class="form-input" placeholder="e.g., English Breakfast" required>
+</div>
+<div class="form-group">
+    <label class="form-label" for="category">
+        Category <span class="required-asterisk">*</span>
+    </label>
+    <select id="category" class="form-select" required>
+        <option value="">Select Category</option>
+        <option value="breakfast">Breakfast</option>
+        <option value="sandwiches">Sandwiches</option>
+        <option value="mains">Mains</option>
+        <option value="coffee">Coffee</option>
+        <option value="drinks">Drinks</option>
+        <option value="Alcohol">Alcohol</option>
+        <option value="sides">Sides</option>
+        <option value="bakery">Bakery</option>
+    </select>
+</div>
+                            <div class="form-group">
+                            <label class="form-label" for="shortDescription">
+                                Short Description <span class="required-asterisk">*</span>
+                            </label>
+                            <div class="form-hint">This appears on the menu card (keep it brief and appetizing!)</div>
+                            <textarea id="shortDescription" class="form-textarea short" required maxlength="150" placeholder="A quick, delicious description that makes customers want to order"></textarea>
+                            <div class="char-counter" id="shortCounter">0 / 150 characters</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="fullDescription">
+                                Full Description <span class="required-asterisk">*</span>
+                            </label>
+                            <div class="form-hint">This appears when customers click for details (be descriptive!)</div>
+                            <textarea id="fullDescription" class="form-textarea" required placeholder="Tell customers everything special about this dish - ingredients, preparation, what makes it unique..."></textarea>
+                            <div class="char-counter" id="fullCounter">0 characters</div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+
+                <!-- Step 2: Pricing & Image -->
+                <div class="form-step" data-step="2">
+                    <div class="form-card">
+                        <h2 class="section-title">Pricing & Image</h2>
+                        <p class="section-description">Set the price and upload a mouthwatering photo</p>
+                        
+                        <div class="form-row three-col">
+                            <div class="form-group">
+                                <label class="form-label" for="basePrice">
+                                    Base Price (₦) <span class="required-asterisk">*</span>
+                                </label>
+                                <div class="form-hint">Starting price (before any add-ons)</div>
+                                <input type="number" id="basePrice" class="form-input" step="0.01" placeholder="2800" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="prepTime">Prep Time (minutes)</label>
+                                <div class="form-hint">How long to prepare?</div>
+                                <input type="number" id="prepTime" class="form-input" placeholder="15">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="servingSize">Serving Size</label>
+                                <div class="form-hint">e.g., "1 person" or "Serves 2"</div>
+                                <input type="text" id="servingSize" class="form-input" placeholder="1 person">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">What Makes It Special? (Optional)</label>
+                            <div class="form-hint">Add 3-5 key selling points that make this dish stand out</div>
+                            <div class="special-features-list" id="specialFeaturesList">
+                                <div class="feature-item">
+                                    <input type="text" placeholder="e.g., Farm-fresh eggs cooked to order" class="special-feature">
+                                    <button type="button" class="remove-btn" onclick="removeFeature(this)">×</button>
+                                </div>
+                            </div>
+                            <button type="button" class="add-btn" onclick="addFeature()">+ Add Another Feature</button>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                Item Image <span class="required-asterisk">*</span>
+                            </label>
+                            <div class="form-hint">Upload a high-quality photo (makes a HUGE difference in orders!)</div>
+                            <div class="image-upload-area" id="uploadArea" onclick="document.getElementById('itemImage').click()">
+                                <div style="font-size: 3.5rem;">📷</div>
+                                <p style="margin-top: 15px; font-size: 1.1rem; font-weight: 600; color: #333;">Click to upload image</p>
+                                <p style="font-size: 0.9rem; color: #888; margin-top: 8px;">High-quality photos get more orders!</p>
+                                <img id="imagePreview" class="image-preview" alt="Preview">
+                                <input type="file" id="itemImage" accept="image/*" style="position: absolute; opacity: 0; pointer-events: none;" required>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Availability & Dietary -->
+                <div class="form-step" data-step="3">
+                    <div class="form-card">
+                        <h2 class="section-title">Availability & Tags</h2>
+                        <p class="section-description">When is this available and what special tags apply?</p>
+                        
+                        <div class="help-box">
+                            <div class="help-icon">💡</div>
+                            <div>
+                                <strong>What are these for?</strong>
+                                <p><strong>Available Days:</strong> Which days this item appears on the menu</p>
+                                <p><strong>Dietary Tags:</strong> Labels that help customers filter (e.g., "Vegetarian", "Spicy")</p>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">📅 Available Days</label>
+                            <div class="simple-explanation">
+                                ✅ Check the days when this item is available. Leave unchecked for days when it's NOT available.
+                            </div>
+                            <div class="days-grid">
+                                <label class="day-checkbox">
+                                    <input type="checkbox" id="monday" checked>
+                                    <span>Monday</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" id="tuesday" checked>
+                                    <span>Tuesday</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" id="wednesday" checked>
+                                    <span>Wednesday</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" id="thursday" checked>
+                                    <span>Thursday</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" id="friday" checked>
+                                    <span>Friday</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" id="saturday" checked>
+                                    <span>Saturday</span>
+                                </label>
+                                <label class="day-checkbox">
+                                    <input type="checkbox" id="sunday" checked>
+                                    <span>Sunday</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">🏷️ Dietary Tags (Check all that apply)</label>
+                            <div class="simple-explanation">
+                                These tags help customers find what they're looking for. Only check the ones that truly apply!
+                            </div>
+                            <div class="tags-grid">
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" id="vegetarian">
+                                    <span class="tag-icon">🥬</span>
+                                    <span class="tag-label">Vegetarian<br><small style="color: #888;">No meat</small></span>
+                                </label>
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" id="vegan">
+                                    <span class="tag-icon">🌱</span>
+                                    <span class="tag-label">Vegan<br><small style="color: #888;">No animal products</small></span>
+                                </label>
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" id="glutenFree">
+                                    <span class="tag-icon">🌾</span>
+                                    <span class="tag-label">Gluten Free<br><small style="color: #888;">No wheat/gluten</small></span>
+                                </label>
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" id="dairyFree">
+                                    <span class="tag-icon">🥛</span>
+                                    <span class="tag-label">Dairy Free<br><small style="color: #888;">No milk products</small></span>
+                                </label>
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" id="nutFree">
+                                    <span class="tag-icon">🥜</span>
+                                    <span class="tag-label">Nut Free<br><small style="color: #888;">No nuts</small></span>
+                                </label>
+                                <label class="tag-checkbox">
+                                    <input type="checkbox" id="spicy">
+                                    <span class="tag-icon">🌶️</span>
+                                    <span class="tag-label">Spicy<br><small style="color: #888;">Has heat</small></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 4: Customizations -->
+                <div class="form-step" data-step="4">
+                    <div class="form-card">
+                        <h2 class="section-title">Customizations (Optional)</h2>
+                        <p class="section-description">Let customers customize their order - only if your item has options!</p>
+                        
+                        <div class="help-box">
+                            <div class="help-icon">🎯</div>
+                            <div>
+                                <strong>When to add customizations:</strong>
+                                <p>✅ Your item has different sizes or portion options</p>
+                                <p>✅ Customers can add extra toppings or ingredients</p>
+                                <p>✅ There are preparation preferences (cooking styles, spice levels)</p>
+                                <p>❌ Skip this step entirely if your item has NO customization options</p>
+                            </div>
+                        </div>
+
+                        <div class="simple-explanation">
+                            <strong>📌 Two Types of Customizations:</strong><br><br>
+                            <strong>1️⃣ REPLACE BASE PRICE:</strong> Customer picks ONE option that becomes the final price<br>
+                            <em>Example: Small (₦2,000), Medium (₦3,000), Large (₦4,000) - they choose one size</em><br><br>
+                            <strong>2️⃣ ADD-ONS (EXTRAS):</strong> Customer can pick MULTIPLE items that add to the base price<br>
+                            <em>Example: Base pizza ₦3,000 + Extra Cheese (₦200) + Pepperoni (₦300) = ₦3,500 total</em>
+                        </div>
+
+                        <div class="customization-section" id="customizationSection">
+                            <p>No customizations added yet. Choose a type below to get started.</p>
+                        </div>
+                        
+                        <div class="customization-type-selector" id="typeSelector">
+                            <div class="customization-type-card" onclick="addCustomizationGroup('replace')">
+                                <div class="type-card-header">
+                                    <div class="type-card-icon">🔄</div>
+                                    <div class="type-card-title">Replace Base Price</div>
+                                </div>
+                                <div class="type-card-description">
+                                    Customer picks ONE option. Their choice BECOMES the price (base price is ignored).
+                                </div>
+                                <div class="type-card-example">
+                                    <strong>Perfect for:</strong>
+                                    Sizes (Small/Medium/Large), Portions (Half/Full), Drink sizes
+                                </div>
+                            </div>
+                            
+                            <div class="customization-type-card" onclick="addCustomizationGroup('addon')">
+                                <div class="type-card-header">
+                                    <div class="type-card-icon">➕</div>
+                                    <div class="type-card-title">Add-Ons (Extras)</div>
+                                </div>
+                                <div class="type-card-description">
+                                    Customer can pick MULTIPLE items. Each selection ADDS to the base price.
+                                </div>
+                                <div class="type-card-example">
+                                    <strong>Perfect for:</strong>
+                                    Extra toppings, Side dishes, Drink add-ins, Premium ingredients
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Navigation Buttons -->
+                <div class="form-navigation">
+                    <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="display: none;">← Previous</button>
+                    <button type="button" class="btn btn-secondary" id="skipBtn" onclick="skipStep()" style="display: none;">Skip This Step</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">Next Step →</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">💾 Save Menu Item</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+    <script src="menucustomize.js"></script>
+</body>
+</html>

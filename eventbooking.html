@@ -1,0 +1,1215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book an Event - Brioche & Brew</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #F9F5EC;
+            color: #333;
+        }
+
+        .event-header {
+            background: linear-gradient(135deg, #8B0000 0%, #A52A2A 100%);
+            padding: 15px 20px 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 500;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .back-arrow {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 8px 15px;
+            border-radius: 8px;
+            text-decoration: none;
+            position: absolute;
+            left: 0;
+        }
+
+        .logo-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .header-title {
+            color: white;
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 30px 15px 50px;
+        }
+
+        /* Progress Stepper */
+        .progress-stepper {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 40px;
+            background: white;
+            padding: 25px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow-x: auto;
+        }
+
+        .step {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            min-width: 80px;
+        }
+
+        .step::after {
+            content: '';
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            width: 100%;
+            height: 3px;
+            background: #E0E0E0;
+            z-index: 0;
+        }
+
+        .step:last-child::after {
+            display: none;
+        }
+
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #E0E0E0;
+            color: #999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .step.active .step-circle {
+            background: #8B0000;
+            color: white;
+            transform: scale(1.15);
+        }
+
+        .step.completed .step-circle {
+            background: #28a745;
+            color: white;
+        }
+
+        .step.completed::after {
+            background: #28a745;
+        }
+
+        .step-label {
+            font-size: 0.8rem;
+            color: #666;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .step.active .step-label {
+            color: #8B0000;
+            font-weight: 700;
+        }
+
+        /* Section Container */
+        .section-container {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .section-container.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .intro-banner {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 18px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            text-align: center;
+        }
+
+        .intro-banner h2 {
+            color: #8B0000;
+            font-size: 2rem;
+            margin-bottom: 12px;
+            font-weight: 700;
+        }
+
+        .intro-banner p {
+            color: #666;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .event-perks {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .perk-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            padding: 15px;
+            background: #FFF5F5;
+            border-radius: 12px;
+        }
+
+        .perk-icon {
+            font-size: 2rem;
+        }
+
+        .perk-text {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #8B0000;
+            text-align: center;
+        }
+
+        /* Event Type Cards with Images */
+        .section-header {
+            font-size: 1.5rem;
+            color: #8B0000;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .event-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .event-type-card {
+            background: white;
+            border-radius: 15px;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .event-type-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(139, 0, 0, 0.2);
+        }
+
+        .event-type-card.selected {
+            border-color: #8B0000;
+            background: #FFF5F5;
+        }
+
+        .event-image {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            background: linear-gradient(135deg, #f5f5f5, #e0e0e0);
+        }
+
+        .event-name {
+            font-weight: 700;
+            color: #333;
+            font-size: 1rem;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .form-container {
+            background: white;
+            padding: 30px 25px;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .form-section-title {
+            font-size: 1.3rem;
+            color: #8B0000;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid #FFF5F5;
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+        }
+
+        .required {
+            color: #FF4444;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #8B0000;
+            box-shadow: 0 0 0 4px rgba(139, 0, 0, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .info-alert {
+            background: linear-gradient(135deg, #FFF5F5, #FFE8E8);
+            border-left: 4px solid #8B0000;
+            padding: 18px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+        }
+
+        .info-alert h4 {
+            color: #8B0000;
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+
+        .info-alert p {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .services-grid {
+            display: grid;
+            gap: 12px;
+        }
+
+        .service-card {
+            background: #FAFAFA;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .service-card:hover {
+            background: #F5F5F5;
+            border-color: #8B0000;
+        }
+
+        .service-card.selected {
+            background: #FFF5F5;
+            border-color: #8B0000;
+            box-shadow: 0 3px 10px rgba(139, 0, 0, 0.15);
+        }
+
+        .service-checkbox {
+            margin-top: 3px;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #8B0000;
+        }
+
+        .service-content {
+            flex: 1;
+        }
+
+        .service-title {
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+
+        .service-description {
+            color: #666;
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .service-price {
+            font-weight: 700;
+            color: #8B0000;
+            font-size: 1.05rem;
+            white-space: nowrap;
+        }
+
+        .service-price.free {
+            color: #28a745;
+        }
+
+        .cost-summary {
+            background: linear-gradient(135deg, #8B0000, #A52A2A);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin: 25px 0;
+        }
+
+        .cost-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 0.95rem;
+        }
+
+        .cost-row.total {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid rgba(255,255,255,0.3);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* Navigation Buttons */
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: #8B0000;
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            background: #A52A2A;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(139, 0, 0, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #8B0000;
+            border: 2px solid #8B0000;
+        }
+
+        .btn-secondary:hover {
+            background: #FFF5F5;
+        }
+
+        .btn:disabled {
+            background: #CCC;
+            color: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .contact-footer {
+            text-align: center;
+            padding: 25px;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .contact-footer h3 {
+            color: #8B0000;
+            margin-bottom: 12px;
+            font-size: 1.2rem;
+        }
+
+        .contact-footer p {
+            color: #666;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .contact-links {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .contact-link {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #8B0000;
+            color: #8B0000;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .contact-link:hover {
+            background: #8B0000;
+            color: white;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #28a745;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            z-index: 10000;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            max-width: 90%;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .toast.show {
+            opacity: 1;
+        }
+
+        .toast.error {
+            background: #dc3545;
+        }
+
+        /* Custom event input styling */
+        .custom-event-input {
+            display: none;
+            margin-top: 15px;
+            padding: 15px;
+            background: #FFF5F5;
+            border-radius: 10px;
+            border-left: 4px solid #8B0000;
+        }
+
+        .custom-event-input.active {
+            display: block;
+        }
+
+        @media (max-width: 767px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .event-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .progress-stepper {
+                padding: 15px;
+            }
+
+            .step-label {
+                font-size: 0.7rem;
+            }
+
+            .nav-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="event-header">
+        <div class="header-top">
+            <a href="index.html" class="back-arrow">←</a>
+            <div class="logo-circle">
+                <img src="./image/logo.png" alt="Brioche & Brew Logo" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+        </div>
+        <div class="header-title">Book Your Event</div>
+    </div>
+
+    <div class="container">
+        <!-- Progress Stepper -->
+        <div class="progress-stepper">
+            <div class="step active" data-step="1">
+                <div class="step-circle">1</div>
+                <div class="step-label">Event Type</div>
+            </div>
+            <div class="step" data-step="2">
+                <div class="step-circle">2</div>
+                <div class="step-label">Details</div>
+            </div>
+            <div class="step" data-step="3">
+                <div class="step-circle">3</div>
+                <div class="step-label">Add-ons</div>
+            </div>
+            <div class="step" data-step="4">
+                <div class="step-circle">4</div>
+                <div class="step-label">Review</div>
+            </div>
+        </div>
+
+        <!-- Step 1: Event Type Selection -->
+        <div class="section-container active" id="step1">
+            <div class="intro-banner">
+                <h2>Create Unforgettable Memories</h2>
+                <p>Host your special celebration at Brioche & Brew. From intimate gatherings to grand celebrations, we make every moment magical.</p>
+                
+                <div class="event-perks">
+                    <div class="perk-item">
+                        <div class="perk-icon">🎉</div>
+                        <div class="perk-text">Custom Setup</div>
+                    </div>
+                    <div class="perk-item">
+                        <div class="perk-icon">🍰</div>
+                        <div class="perk-text">Special Cakes</div>
+                    </div>
+                    <div class="perk-item">
+                        <div class="perk-icon">📸</div>
+                        <div class="perk-text">Photo Areas</div>
+                    </div>
+                    <div class="perk-item">
+                        <div class="perk-icon">🎵</div>
+                        <div class="perk-text">Your Music</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-container">
+                <h2 class="section-header">What Are You Celebrating?</h2>
+                <div class="event-grid">
+                    <div class="event-type-card" onclick="selectEventType('birthday', this)">
+                        <img src="./image/birthday2.jpeg" alt="Birthday Party" class="event-image">
+                        <div class="event-name">Birthday Party</div>
+                    </div>
+                    <div class="event-type-card" onclick="selectEventType('bridal', this)">
+                        <img src="./image/bridal.jpeg" alt="Bridal Shower" class="event-image">
+                        <div class="event-name">Bridal Shower</div>
+                    </div>
+                    <div class="event-type-card" onclick="selectEventType('proposal', this)">
+                        <img src="./image/proposal.jpeg" alt="Proposal" class="event-image">
+                        <div class="event-name">Proposal</div>
+                    </div>
+                    <div class="event-type-card" onclick="selectEventType('corporate', this)">
+                        <img src="./image/corporate.jpeg" alt="Corporate Event" class="event-image">
+                        <div class="event-name">Corporate Event</div>
+                    </div>
+                    <div class="event-type-card" onclick="selectEventType('other', this)">
+                        <img src="./image/other.jpeg" alt="Other Event" class="event-image">
+                        <div class="event-name">Other Event</div>
+                    </div>
+                </div>
+
+                <!-- Custom Event Input -->
+                <div class="custom-event-input" id="customEventInput">
+                    <div class="form-group">
+                        <label class="form-label">Please specify your event type <span class="required">*</span></label>
+                        <input type="text" class="form-input" id="customEventType" placeholder="e.g., Family Reunion, Engagement Party, etc.">
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-primary" id="step1Next" onclick="goToStep(2)" disabled>Continue to Event Details</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2: Event Details -->
+        <div class="section-container" id="step2">
+            <div class="form-container">
+                <h3 class="form-section-title">Event Information</h3>
+
+                <div class="info-alert">
+                    <h4>Event Booking Requirements</h4>
+                    <p>Minimum 6 guests • 48-hour advance booking • 20% service charge applies • ₦10,000 non-refundable deposit required</p>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Your Full Name <span class="required">*</span></label>
+                    <input type="text" class="form-input" id="fullName" required>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Phone Number <span class="required">*</span></label>
+                        <input type="tel" class="form-input" id="phone" placeholder="+234" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address <span class="required">*</span></label>
+                        <input type="email" class="form-input" id="email" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Event Date <span class="required">*</span></label>
+                        <input type="date" class="form-input" id="eventDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Start Time <span class="required">*</span></label>
+                        <select class="form-select" id="startTime" required>
+                            <option value="">Select time</option>
+                            <option value="09:00">9:00 AM</option>
+                            <option value="10:00">10:00 AM</option>
+                            <option value="11:00">11:00 AM</option>
+                            <option value="12:00">12:00 PM</option>
+                            <option value="13:00">1:00 PM</option>
+                            <option value="14:00">2:00 PM</option>
+                            <option value="15:00">3:00 PM</option>
+                            <option value="16:00">4:00 PM</option>
+                            <option value="17:00">5:00 PM</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Expected Guests <span class="required">*</span></label>
+                        <select class="form-select" id="guestCount" required>
+                            <option value="">Select number</option>
+                            <option value="6-10">6-10 Guests</option>
+                            <option value="11-15">11-15 Guests</option>
+                            <option value="16-20">16-20 Guests</option>
+                            <option value="21-30">21-30 Guests</option>
+                            <option value="30+">30+ Guests</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Duration <span class="required">*</span></label>
+                        <select class="form-select" id="duration" required>
+                            <option value="2">2 Hours</option>
+                            <option value="3" selected>3 Hours</option>
+                            <option value="4">4 Hours</option>
+                            <option value="5">5+ Hours</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Event Space Preference</label>
+                    <select class="form-select" id="spacePreference">
+                        <option value="">Any available space</option>
+                        <option value="indoor">Indoor Dining Area</option>
+                        <option value="outdoor">Outdoor Terrace</option>
+                        <option value="lounge">Work Lounge (Private)</option>
+                    </select>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="goToStep(1)">Back</button>
+                    <button class="btn btn-primary" id="step2Next" onclick="goToStep(3)">Continue to Add-ons</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Services & Add-ons -->
+        <div class="section-container" id="step3">
+            <div class="form-container">
+                <h3 class="form-section-title">Event Services & Add-ons</h3>
+
+                <div class="services-grid">
+                    <label class="service-card" onclick="toggleService(this)">
+                        <input type="checkbox" class="service-checkbox" name="services" value="cake" data-price="8000">
+                        <div class="service-content">
+                            <div class="service-title">Custom Celebration Cake</div>
+                            <div class="service-description">Beautiful custom cake with your personalized message</div>
+                        </div>
+                        <div class="service-price">₦8,000</div>
+                    </label>
+
+                    <label class="service-card" onclick="toggleService(this)">
+                        <input type="checkbox" class="service-checkbox" name="services" value="decorations" data-price="5000">
+                        <div class="service-content">
+                            <div class="service-title">Premium Decorations</div>
+                            <div class="service-description">Balloons, table centerpieces, themed decorations</div>
+                        </div>
+                        <div class="service-price">₦5,000</div>
+                    </label>
+
+                    <label class="service-card" onclick="toggleService(this)">
+                        <input type="checkbox" class="service-checkbox" name="services" value="champagne" data-price="12000">
+                        <div class="service-content">
+                            <div class="service-title">Celebration Champagne</div>
+                            <div class="service-description">Premium sparkling wine for toasting</div>
+                        </div>
+                        <div class="service-price">₦12,000</div>
+                    </label>
+
+                    <label class="service-card" onclick="toggleService(this)">
+                        <input type="checkbox" class="service-checkbox" name="services" value="photo-area" data-price="6000">
+                        <div class="service-content">
+                            <div class="service-title">Photo Setup Area</div>
+                            <div class="service-description">Designated photo area with backdrop and props</div>
+                        </div>
+                        <div class="service-price">₦6,000</div>
+                    </label>
+
+                    <label class="service-card" onclick="toggleService(this)">
+                        <input type="checkbox" class="service-checkbox" name="services" value="birthday-song" data-price="0">
+                        <div class="service-content">
+                            <div class="service-title">Birthday Song Performance</div>
+                            <div class="service-description">Our team performs a special birthday song</div>
+                        </div>
+                        <div class="service-price free">Free</div>
+                    </label>
+
+                    <label class="service-card" onclick="toggleService(this)">
+                        <input type="checkbox" class="service-checkbox" name="services" value="playlist" data-price="0">
+                        <div class="service-content">
+                            <div class="service-title">Custom Playlist</div>
+                            <div class="service-description">We'll play your curated music selection</div>
+                        </div>
+                        <div class="service-price free">Free</div>
+                    </label>
+                    
+                    <!-- Proposal-specific services -->
+                    <label class="service-card" onclick="toggleService(this)">
+                        <input type="checkbox" class="service-checkbox" name="services" value="proposal-setup" data-price="15000">
+                        <div class="service-content">
+                            <div class="service-title">Romantic Proposal Setup</div>
+                            <div class="service-description">Special romantic setup with flowers and candles</div>
+                        </div>
+                        <div class="service-price">₦15,000</div>
+                    </label>
+
+                    <label class="service-card" onclick="toggleService(this)">
+                        <input type="checkbox" class="service-checkbox" name="services" value="photographer" data-price="20000">
+                        <div class="service-content">
+                            <div class="service-title">Professional Photographer</div>
+                            <div class="service-description">Capture your special moment professionally</div>
+                        </div>
+                        <div class="service-price">₦20,000</div>
+                    </label>
+                </div>
+
+                <div class="cost-summary">
+                    <div class="cost-row">
+                        <span>Base Reservation Deposit</span>
+                        <span>₦10,000</span>
+                    </div>
+                    <div class="cost-row">
+                        <span>Selected Add-ons</span>
+                        <span id="addonsTotal">₦0</span>
+                    </div>
+                    <div class="cost-row total">
+                        <span>Total Deposit Due</span>
+                        <span id="totalCost">₦10,000</span>
+                    </div>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="goToStep(2)">Back</button>
+                    <button class="btn btn-primary" onclick="goToStep(4)">Review & Continue</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 4: Review & Additional Details -->
+        <div class="section-container" id="step4">
+            <div class="form-container">
+                <h3 class="form-section-title">Review Your Booking</h3>
+
+                <div id="reviewSummary" style="background: #FFF5F5; padding: 20px; border-radius: 12px; margin-bottom: 25px;">
+                    <!-- Review content will be populated by JavaScript -->
+                </div>
+
+                <h3 class="form-section-title" style="margin-top: 30px;">Additional Details</h3>
+
+                <div class="form-group">
+                    <label class="form-label">Cake Message (if applicable)</label>
+                    <input type="text" class="form-input" id="cakeMessage" placeholder="e.g., Happy Birthday Sarah!" maxlength="40">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Dietary Restrictions & Allergies</label>
+                    <textarea class="form-textarea" id="dietary" placeholder="Please list any dietary restrictions or allergies for your guests..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Special Requests</label>
+                    <textarea class="form-textarea" id="specialRequests" placeholder="Any other details or special requests for your event..."></textarea>
+                </div>
+
+                <div class="nav-buttons">
+                    <button class="btn btn-secondary" onclick="goToStep(3)">Back</button>
+                    <button class="btn btn-primary" onclick="submitBooking()">Complete Booking & Pay Deposit</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="contact-footer">
+            <h3>Need Help Planning?</h3>
+            <p>Our events team is here to help make your celebration perfect</p>
+            <div class="contact-links">
+                <a href="tel:+2341234567890" class="contact-link">Call Us</a>
+                <a href="mailto:events@briochebrew.com" class="contact-link">Email Events Team</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let currentStep = 1;
+        let selectedEventType = null;
+        let totalAddons = 0;
+        const baseDeposit = 10000;
+
+        // Set minimum date to 2 days from now
+        const eventDateInput = document.getElementById('eventDate');
+        const minDate = new Date();
+        minDate.setDate(minDate.getDate() + 2);
+        eventDateInput.min = minDate.toISOString().split('T')[0];
+
+        // Add input listeners for step 2 validation
+        ['fullName', 'phone', 'email', 'eventDate', 'startTime', 'guestCount'].forEach(id => {
+            document.getElementById(id).addEventListener('input', validateStep2);
+        });
+
+        function selectEventType(type, card) {
+            selectedEventType = type;
+            
+            document.querySelectorAll('.event-type-card').forEach(c => {
+                c.classList.remove('selected');
+            });
+            card.classList.add('selected');
+            
+            // Show custom event input if "Other Event" is selected
+            const customEventInput = document.getElementById('customEventInput');
+            if (type === 'other') {
+                customEventInput.classList.add('active');
+                document.getElementById('step1Next').disabled = true;
+            } else {
+                customEventInput.classList.remove('active');
+                document.getElementById('step1Next').disabled = false;
+            }
+            
+            showToast(`${card.querySelector('.event-name').textContent} selected`);
+        }
+
+        // Validate custom event input
+        document.getElementById('customEventType').addEventListener('input', function() {
+            if (selectedEventType === 'other') {
+                document.getElementById('step1Next').disabled = !this.value.trim();
+            }
+        });
+
+        function validateStep2() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const eventDate = document.getElementById('eventDate').value;
+            const startTime = document.getElementById('startTime').value;
+            const guestCount = document.getElementById('guestCount').value;
+
+            const isValid = fullName && phone && email && eventDate && startTime && guestCount;
+            document.getElementById('step2Next').disabled = !isValid;
+        }
+
+        function goToStep(stepNumber) {
+            // Validation before moving forward
+            if (stepNumber > currentStep) {
+                if (currentStep === 1 && !selectedEventType) {
+                    showToast('Please select an event type', 'error');
+                    return;
+                }
+                if (currentStep === 1 && selectedEventType === 'other' && !document.getElementById('customEventType').value.trim()) {
+                    showToast('Please specify your event type', 'error');
+                    return;
+                }
+                if (currentStep === 2 && !validateStep2Fields()) {
+                    showToast('Please fill in all required fields', 'error');
+                    return;
+                }
+            }
+
+            // Hide current section
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            
+            // Update stepper
+            updateStepper(stepNumber);
+            
+            // Show new section
+            document.getElementById(`step${stepNumber}`).classList.add('active');
+            currentStep = stepNumber;
+
+            // If moving to review step, populate summary
+            if (stepNumber === 4) {
+                populateReviewSummary();
+            }
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function validateStep2Fields() {
+            const fullName = document.getElementById('fullName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const eventDate = document.getElementById('eventDate').value;
+            const startTime = document.getElementById('startTime').value;
+            const guestCount = document.getElementById('guestCount').value;
+
+            return fullName && phone && email && eventDate && startTime && guestCount;
+        }
+
+        function updateStepper(activeStep) {
+            document.querySelectorAll('.step').forEach((step, index) => {
+                const stepNum = index + 1;
+                step.classList.remove('active', 'completed');
+                
+                if (stepNum < activeStep) {
+                    step.classList.add('completed');
+                } else if (stepNum === activeStep) {
+                    step.classList.add('active');
+                }
+            });
+        }
+
+        function toggleService(card) {
+            setTimeout(() => {
+                if (card.classList.contains('selected')) {
+                    card.classList.remove('selected');
+                } else {
+                    card.classList.add('selected');
+                }
+                updateCostSummary();
+            }, 10);
+        }
+
+        function updateCostSummary() {
+            const checkboxes = document.querySelectorAll('.service-checkbox:checked');
+            totalAddons = 0;
+            
+            checkboxes.forEach(checkbox => {
+                const price = parseInt(checkbox.dataset.price);
+                totalAddons += price;
+            });
+            
+            document.getElementById('addonsTotal').textContent = `₦${totalAddons.toLocaleString()}`;
+            document.getElementById('totalCost').textContent = `₦${(baseDeposit + totalAddons).toLocaleString()}`;
+        }
+
+        function populateReviewSummary() {
+            const eventTypeCard = document.querySelector('.event-type-card.selected');
+            let eventTypeName = eventTypeCard ? eventTypeCard.querySelector('.event-name').textContent : 'Not selected';
+            
+            // If "Other Event" is selected, use the custom input value
+            if (selectedEventType === 'other') {
+                const customEventType = document.getElementById('customEventType').value.trim();
+                eventTypeName = customEventType || 'Other Event';
+            }
+            
+            const selectedServices = Array.from(document.querySelectorAll('.service-checkbox:checked'))
+                .map(cb => {
+                    const card = cb.closest('.service-card');
+                    const title = card.querySelector('.service-title').textContent;
+                    const price = cb.dataset.price;
+                    return { title, price: parseInt(price) };
+                });
+
+            let servicesHTML = '<p style="color: #666; font-style: italic;">No add-ons selected</p>';
+            if (selectedServices.length > 0) {
+                servicesHTML = '<ul style="margin: 0; padding-left: 20px;">';
+                selectedServices.forEach(service => {
+                    servicesHTML += `<li style="margin-bottom: 5px;">${service.title} - ${service.price === 0 ? '<span style="color: #28a745;">Free</span>' : '₦' + service.price.toLocaleString()}</li>`;
+                });
+                servicesHTML += '</ul>';
+            }
+
+            const reviewHTML = `
+                <div style="display: grid; gap: 20px;">
+                    <div>
+                        <h4 style="color: #8B0000; margin-bottom: 8px; font-size: 1rem;">Event Type</h4>
+                        <p style="color: #333; font-size: 1.1rem; font-weight: 600;">${eventTypeName}</p>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #8B0000; margin-bottom: 8px; font-size: 1rem;">Contact Information</h4>
+                        <p style="color: #333; margin-bottom: 4px;"><strong>Name:</strong> ${document.getElementById('fullName').value}</p>
+                        <p style="color: #333; margin-bottom: 4px;"><strong>Phone:</strong> ${document.getElementById('phone').value}</p>
+                        <p style="color: #333;"><strong>Email:</strong> ${document.getElementById('email').value}</p>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #8B0000; margin-bottom: 8px; font-size: 1rem;">Event Details</h4>
+                        <p style="color: #333; margin-bottom: 4px;"><strong>Date:</strong> ${formatDate(document.getElementById('eventDate').value)}</p>
+                        <p style="color: #333; margin-bottom: 4px;"><strong>Time:</strong> ${formatTime(document.getElementById('startTime').value)}</p>
+                        <p style="color: #333; margin-bottom: 4px;"><strong>Guests:</strong> ${document.getElementById('guestCount').value}</p>
+                        <p style="color: #333; margin-bottom: 4px;"><strong>Duration:</strong> ${document.getElementById('duration').value} hours</p>
+                        <p style="color: #333;"><strong>Space:</strong> ${document.getElementById('spacePreference').value || 'Any available space'}</p>
+                    </div>
+                    
+                    <div>
+                        <h4 style="color: #8B0000; margin-bottom: 8px; font-size: 1rem;">Selected Add-ons</h4>
+                        ${servicesHTML}
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #8B0000, #A52A2A); color: white; padding: 20px; border-radius: 10px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Base Deposit:</span>
+                            <span style="font-weight: 700;">₦10,000</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 15px;">
+                            <span>Add-ons Total:</span>
+                            <span style="font-weight: 700;">₦${totalAddons.toLocaleString()}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; padding-top: 15px; border-top: 2px solid rgba(255,255,255,0.3); font-size: 1.3rem; font-weight: 700;">
+                            <span>Total Deposit:</span>
+                            <span>₦${(baseDeposit + totalAddons).toLocaleString()}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('reviewSummary').innerHTML = reviewHTML;
+        }
+
+        function formatDate(dateString) {
+            if (!dateString) return 'Not selected';
+            const date = new Date(dateString + 'T00:00:00');
+            return date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
+        function formatTime(timeString) {
+            if (!timeString) return 'Not selected';
+            const [hours, minutes] = timeString.split(':');
+            const hour = parseInt(hours);
+            const ampm = hour >= 12 ? 'PM' : 'AM';
+            const displayHour = hour > 12 ? hour - 12 : (hour === 0 ? 12 : hour);
+            return `${displayHour}:${minutes} ${ampm}`;
+        }
+
+        function submitBooking() {
+            const selectedServices = Array.from(document.querySelectorAll('.service-checkbox:checked'))
+                .map(cb => cb.value);
+
+            // Determine event type name
+            let eventTypeName = selectedEventType;
+            if (selectedEventType === 'other') {
+                eventTypeName = document.getElementById('customEventType').value.trim() || 'Other Event';
+            }
+
+            const formData = {
+                eventType: selectedEventType,
+                eventTypeName: eventTypeName,
+                fullName: document.getElementById('fullName').value,
+                phone: document.getElementById('phone').value,
+                email: document.getElementById('email').value,
+                eventDate: document.getElementById('eventDate').value,
+                startTime: document.getElementById('startTime').value,
+                guestCount: document.getElementById('guestCount').value,
+                duration: document.getElementById('duration').value,
+                spacePreference: document.getElementById('spacePreference').value,
+                services: selectedServices,
+                cakeMessage: document.getElementById('cakeMessage').value,
+                dietary: document.getElementById('dietary').value,
+                specialRequests: document.getElementById('specialRequests').value,
+                totalDeposit: baseDeposit + totalAddons
+            };
+
+            console.log('Event Booking Data:', formData);
+
+            showToast('Processing your event booking...');
+
+            setTimeout(() => {
+                alert(`Event Booking Confirmed!\n\nEvent: ${eventTypeName}\nName: ${formData.fullName}\nDate: ${formData.eventDate}\nGuests: ${formData.guestCount}\nDeposit: ₦${formData.totalDeposit.toLocaleString()}\n\nIn production, this would redirect to payment gateway.\n\nOur events coordinator will contact you within 24 hours to finalize details.`);
+                
+                // Reset everything
+                window.location.reload();
+            }, 2000);
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast show' + (type === 'error' ? ' error' : '');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Initialize
+        updateCostSummary();
+        validateStep2();
+    </script>
+</body>
+</html>

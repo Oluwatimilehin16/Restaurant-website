@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brioche & Brew - Savor the Art of Brunch</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="nav" id="navbar">
+        <div class="logo"></div>
+        <button class="menu-toggle" id="menuToggle"></button>
+        <div class="nav-menu" id="navMenu">
+            <a href="#home">Home</a>
+            <a href="reserve_table.html">Reserve Table</a>
+            <a href="#menu">Order Now</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+        <a href="#" class="instagram-btn"></a>
+    </nav>
+
+    <!-- Improved Floating Action Buttons -->
+    <div class="floating-actions">
+        <button class="float-btn call-btn" onclick="handleCall()" title="Call Us"></button>
+        <button class="float-btn menu-btn" onclick="scrollToMenu()" title="View Menu"></button>
+        <button class="float-btn whatsapp-btn" onclick="openWhatsApp()" title="WhatsApp"></button>
+    </div>
+
+    <!-- Hero Section -->
+    <header class="header" id="home">
+        <div class="hero-content">
+            <h1>Savor the<br>Art of<br>Brunch</h1>
+            <p class="hero-subtitle">with Brioche and Brew</p>
+            <a href="reserve_table.html" class="cta-button">Reserve a Table</a>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+       <section class="section brunch-section" id="about">
+    <div class="brunch-content">
+        <h2 class="section-title">Brioche and Brew</h2>
+        <p class="section-subtitle">At Brioche & Brew, brunch is more than a meal – it's a ritual of indulgence. From buttery brioches to burgers, milkshakes and fine wine, every plate blends comfort with sophistication.</p>
+        <p class="section-subtitle">Here, good food meets great company, inviting you to slow down, savor, and celebrate the simple luxury of dining well.</p>
+    </div>
+    <div class="image-card brunch-plate">
+        <img src="./image/bread.jpeg" alt="Delicious brunch plate">
+    </div>
+</section>
+
+        <!-- Place for Every Mood -->
+        <section class="section background">
+            <h2 class="section-title">A Place for Every Mood</h2>
+            <p class="section-subtitle">
+                From quiet corners to vibrant gatherings, discover spaces crafted just for you.
+            </p>
+
+            <div class="mood-cards-grid">
+                <div class="image-card">
+                    <img src="./image/indoor-dining.jpeg" alt="Indoor dining area">
+                    <div class="card-caption">Indoor Dining</div>
+                </div>
+
+                <div class="image-card">
+                    <img src="./image/work-lounge.jpeg" alt="Work lounge area">
+                    <div class="card-caption">Work Lounge</div>
+                </div>
+
+                <div class="image-card">
+                    <img src="./image/outdoor.jpeg" alt="Outdoor terrace">
+                    <div class="card-caption">Outdoor Terrace</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Menu Section -->
+        <section class="section" id="menu">
+            <div class="menu-section">
+                <h2 class="section-title">Our Menu</h2>
+                <p class="section-subtitle">
+                    At Brioche & Brew, every dish is a balance of comfort and craft. From buttery brioches that melt in your mouth, to hearty hotpots made for sharing, to burgers stacked with flavor and milkshakes whipped to perfection.
+                </p>
+                
+                <div class="menu-images-container" id="menuImagesContainer">
+                    <div class="menu-image-card menu-card-1">
+                        <img src="./image/coffee.jpeg" alt="Coffee and latte">
+                    </div>
+                    <div class="menu-image-card menu-card-2">
+                        <img src="./image/milkshake.jpeg" alt="Oreo milkshake">
+                    </div>
+                    <div class="menu-image-card menu-card-3">
+                        <img src="./image/burger.jpeg" alt="Burger and fries">
+                    </div>
+                </div>
+
+                <a href="customer_menu.html" class="view-menu-btn">View Menu</a>
+            </div>
+        </section>
+
+        <!-- Featured Image Section -->
+        <section class="section">
+            <div class="image-card wafflespour">
+                <img src="./image/wafflespour.jpeg" alt="Brioche & Brew signature dish">
+            </div>
+        </section>
+
+ <section class="section background">
+    <!-- Mobile layout -->
+    <div class="favorites-mobile">
+        <h2 class="section-title">Brioche & Brew Favorites</h2>
+        <p class="section-subtitle">A taste of our signature creations</p>
+        <div class="favorites-slideshow">
+            <div class="slideshow-container">
+                <div class="slideshow-track" id="favoritesTrack">
+                    <div class="slide">
+                        <div class="favorite-item">
+                            <img src="./image/sunset.jpeg" alt="Burgundy Sunset Board">
+                            <div class="favorite-overlay">
+                                <div class="favorite-title">"Burgundy Sunset Board"</div>
+                                <div class="favorite-desc">Cheese, meats & wine pairing</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="favorite-item">
+                            <img src="./image/specials2.jpeg" alt="Golden Sunrise Tart">
+                            <div class="favorite-overlay">
+                                <div class="favorite-title">"Golden Sunrise Tart"</div>
+                                <div class="favorite-desc">Puff pastry with baked eggs</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="favorite-item">
+                            <img src="./image/specials.jpeg" alt="Garden Sphere Symphony">
+                            <div class="favorite-overlay">
+                                <div class="favorite-title">"Garden Sphere Symphony"</div>
+                                <div class="favorite-desc">Fried spheres with herbs</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="favorite-item">
+                            <img src="./image/monstercookie.jpeg" alt="Cookie Monster's Dream">
+                            <div class="favorite-overlay">
+                                <div class="favorite-title">"Cookie Monster's Dream"</div>
+                                <div class="favorite-desc">Blue milkshake with cookies</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="slideshow-nav prev" onclick="changeSlide('favorites', -1)">❮</button>
+                <button class="slideshow-nav next" onclick="changeSlide('favorites', 1)">❯</button>
+                <div class="slideshow-dots">
+                    <span class="dot active" onclick="currentSlide('favorites', 1)"></span>
+                    <span class="dot" onclick="currentSlide('favorites', 2)"></span>
+                    <span class="dot" onclick="currentSlide('favorites', 3)"></span>
+                    <span class="dot" onclick="currentSlide('favorites', 4)"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop layout -->
+    <div class="favorites-section-desktop">
+        <div class="favorites-text-content">
+            <h2 class="section-title">Brioche & Brew Favorites</h2>
+            <p class="section-subtitle">A taste of our signature creations</p>
+        </div>
+        <div class="favorites-slideshow-desktop">
+            <div class="slideshow-container">
+                <div class="slideshow-track" id="favoritesDesktopTrack">
+                    <div class="slide">
+                        <div class="favorite-item">
+                            <img src="./image/sunset.jpeg" alt="Burgundy Sunset Board">
+                            <div class="favorite-overlay">
+                                <div class="favorite-title">"Burgundy Sunset Board"</div>
+                                <div class="favorite-desc">Cheese, meats & wine pairing</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="favorite-item">
+                            <img src="./image/specials2.jpeg" alt="Golden Sunrise Tart">
+                            <div class="favorite-overlay">
+                                <div class="favorite-title">"Golden Sunrise Tart"</div>
+                                <div class="favorite-desc">Puff pastry with baked eggs</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="favorite-item">
+                            <img src="./image/specials.jpeg" alt="Garden Sphere Symphony">
+                            <div class="favorite-overlay">
+                                <div class="favorite-title">"Garden Sphere Symphony"</div>
+                                <div class="favorite-desc">Fried spheres with herbs</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="slide">
+                        <div class="favorite-item">
+                            <img src="./image/monstercookie.jpeg" alt="Cookie Monster's Dream">
+                            <div class="favorite-overlay">
+                                <div class="favorite-title">"Cookie Monster's Dream"</div>
+                                <div class="favorite-desc">Blue milkshake with cookies</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="slideshow-nav prev" onclick="changeSlide('favoritesDesktop', -1)">❮</button>
+                <button class="slideshow-nav next" onclick="changeSlide('favoritesDesktop', 1)">❯</button>
+                <div class="slideshow-dots">
+                    <span class="dot active" onclick="currentSlide('favoritesDesktop', 1)"></span>
+                    <span class="dot" onclick="currentSlide('favoritesDesktop', 2)"></span>
+                    <span class="dot" onclick="currentSlide('favoritesDesktop', 3)"></span>
+                    <span class="dot" onclick="currentSlide('favoritesDesktop', 4)"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+        <!-- Celebrate With Us -->
+       <section class="section">
+    <!-- Mobile layout -->
+    <div class="celebration-mobile">
+        <h2 class="section-title">Celebrate With Us</h2>
+        <p class="section-subtitle">"At Brioche & Brew, we believe every milestone deserves a touch of elegance. Whether it's an intimate <strong>engagement proposal</strong>, a joyful <strong>bachelorette brunch</strong>, a memorable <strong>birthday celebration</strong>, or any other special gathering, our spaces set the stage for unforgettable moments."</p>
+        <div class="slideshow-container celebration-slideshow">
+            <div class="slideshow-track" id="celebrationsTrack">
+                <div class="slide">
+                    <div class="celebration-slide">
+                        <img src="./image/marry.jpeg" alt="Romantic proposal setup">
+                        <div class="celebration-overlay">
+                            <div class="celebration-title">"Say Yes to Forever"</div>
+                            <button class="book-celebration-btn" id="bookBtn">Book Your Celebration</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide">
+                    <div class="celebration-slide">
+                        <img src="./image/birthday.jpeg" alt="Birthday celebration">
+                        <div class="celebration-overlay">
+                            <div class="celebration-title">"Celebrate in Style"</div>
+                            <button class="book-celebration-btn" id="bookBtn">Book Your Celebration</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="slide">
+                    <div class="celebration-slide">
+                        <img src="./image/bachelorette.jpeg" alt="Toast to love">
+                        <div class="celebration-overlay">
+                            <div class="celebration-title">"Toast to Love"</div>
+                            <button class="book-celebration-btn" id="bookBtn">Book Your Celebration</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button class="slideshow-nav prev" onclick="changeSlide('celebrations', -1)">❮</button>
+            <button class="slideshow-nav next" onclick="changeSlide('celebrations', 1)">❯</button>
+            <div class="slideshow-dots">
+                <span class="dot active" onclick="currentSlide('celebrations', 1)"></span>
+                <span class="dot" onclick="currentSlide('celebrations', 2)"></span>
+                <span class="dot" onclick="currentSlide('celebrations', 3)"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Desktop layout -->
+    <div class="celebration-section-desktop">
+        <h2 class="section-title">Celebrate With Us</h2>
+        <p class="section-subtitle">"At Brioche & Brew, we believe every milestone deserves a touch of elegance. Whether it's an intimate <strong>engagement proposal</strong>, a joyful <strong>bachelorette brunch</strong>, a memorable <strong>birthday celebration</strong>, or any other special gathering, our spaces set the stage for unforgettable moments."</p>
+        <div class="celebration-grid">
+            <div class="celebration-card">
+                <img src="./image/marry.jpeg" alt="Romantic proposal setup">
+                <div class="celebration-card-overlay">
+                    <div class="celebration-card-title">"Say Yes to Forever"</div>
+                    <button class="book-celebration-btn">Book Your Celebration</button>
+                </div>
+            </div>
+            <div class="celebration-card">
+                <img src="./image/birthday.jpeg" alt="Birthday celebration">
+                <div class="celebration-card-overlay">
+                    <div class="celebration-card-title">"Celebrate in Style"</div>
+                    <button class="book-celebration-btn">Book Your Celebration</button>
+                </div>
+            </div>
+            <div class="celebration-card">
+                <img src="./image/bachelorette.jpeg" alt="Toast to love">
+                <div class="celebration-card-overlay">
+                    <div class="celebration-card-title">"Toast to Love"</div>
+                    <button class="book-celebration-btn">Book Your Celebration</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+        <!-- Delivery Section -->
+        <section class="section background delivery-mobile">
+            <h2 class="section-title">Deliver to Your Doorstep</h2>
+            <p class="section-subtitle">
+                Your favorite brunch, freshly prepared and delivered right to your doorstep.
+            </p>
+
+            <div class="delivery-card">
+                <img src="./image/delivery.jpeg" alt="Delivery service" class="delivery-image">
+                <p><em>Enjoy Brioche & Brew anytime, anywhere</em></p>
+                <a href="#" class="order-now-btn">Order Now</a>
+            </div>
+        </section>
+
+            <section class="section background delivery-section-desktop">
+    <div class="delivery-text-content">
+        <h2 class="section-title">Deliver to Your Doorstep</h2>
+        <p class="section-subtitle">
+            Your favorite brunch, freshly prepared and delivered right to your doorstep.
+        </p>
+        <p><em>Enjoy Brioche & Brew anytime, anywhere</em></p>
+        <a href="#" class="order-now-btn">Order Now</a>
+    </div>
+    <div class="delivery-card delivery-card-desktop">
+        <img src="./image/delivery.jpeg" alt="Delivery service" class="delivery-image">
+    </div>
+</section>
+        <!-- Reviews Section -->
+        <section class="section background">
+            <h2 class="section-title">Loved by Our Guests</h2>
+            
+            <div class="reviews-section">
+                <div class="reviews-ticker-container">
+                    <div class="review-item">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"Planning a wedding is stressful, but Brioche & Brew gave me a calm, beautiful space to celebrate with my loved friends. It's a memory I'll always cherish."</p>
+                        <p class="reviewer-name">Chidinma O (Bride)</p>
+                    </div>
+                    
+                    <div class="review-item">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"The ambiance is perfect for a romantic brunch date. The food exceeded our expectations and the service was impeccable!"</p>
+                        <p class="reviewer-name">Michael & Sarah</p>
+                    </div>
+                    
+                    <div class="review-item">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"Best brunch spot in Lagos! The Golden Sunrise Tart is absolutely divine. Can't wait to come back!"</p>
+                        <p class="reviewer-name">Adebayo T.</p>
+                    </div>
+
+                    <div class="review-item">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"Celebrated my birthday here and it was magical. The staff made everything perfect and the outdoor terrace is stunning!"</p>
+                        <p class="reviewer-name">Kemi A.</p>
+                    </div>
+
+                    <div class="review-item">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"The Cookie Monster's Dream milkshake is absolutely incredible! My kids loved it and I loved the peaceful atmosphere."</p>
+                        <p class="reviewer-name">Funmi O.</p>
+                    </div>
+
+                    <div class="review-item">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"Perfect spot for business meetings. Great wifi, comfortable seating, and the coffee is exceptional!"</p>
+                        <p class="reviewer-name">David A.</p>
+                    </div>
+
+                    <!-- Duplicate for seamless loop -->
+                    <div class="review-item">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"Planning a wedding is stressful, but Brioche & Brew gave me a calm, beautiful space to celebrate with my loved friends. It's a memory I'll always cherish."</p>
+                        <p class="reviewer-name">Chidinma O (Bride)</p>
+                    </div>
+                    
+                    <div class="review-item">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"The ambiance is perfect for a romantic brunch date. The food exceeded our expectations and the service was impeccable!"</p>
+                        <p class="reviewer-name">Michael & Sarah</p>
+                    </div>
+                    
+                    <div class="review-item">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"Best brunch spot in Lagos! The Golden Sunrise Tart is absolutely divine. Can't wait to come back!"</p>
+                        <p class="reviewer-name">Adebay T.</p>
+                    </div>
+
+                    <div class="review-item">
+                        <div class="stars">⭐⭐⭐⭐⭐</div>
+                        <p class="review-text">"Celebrated my birthday here and it was magical. The staff made everything perfect and the outdoor terrace is stunning!"</p>
+                        <p class="reviewer-name">Kemi A.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final CTA -->
+        <section class="final-cta">
+            <h2>Join us for<br>Brunch Today</h2>
+            <a href="reserve_table.html" class="cta-button">Reserve a Table</a>
+        </section>
+    </main>
+<footer class="footer" id="contact">
+    <div class="footer-content">
+        <div class="footer-grid">
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <img src="./image/location.png" alt="" class="footer-icon">
+                    Where to Find Us
+                </h3>
+                <p><a href="tel:091234560">Call us on 09 1234 560</a></p>
+                <p><a href="mailto:hello@briochebrew.com">Email: hello@briochebrew.com</a></p>
+            </div>
+            
+            <div class="footer-section">
+                <h3 class="footer-title">Address</h3>
+                <p>Brioche & Brew<br>1234 Amenme, Lagos.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3 class="footer-title">
+                    <img src="./image/clock.png" alt="" class="footer-icon">
+                    Opening Hours
+                </h3>
+                <p>Monday - Sunday<br>8:00 AM - 10:00 PM</p>
+            </div>
+        </div>
+        
+        <div class="social-links">
+            <a href="#" class="social-link instagram-social" aria-label="Instagram"></a>
+            <a href="#" class="social-link tiktok-social" aria-label="TikTok"></a>
+            <a href="#" class="social-link whatsapp-social" aria-label="WhatsApp"></a>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2025 Brioche & Brew. All rights reserved.</p>
+        </div>
+    </div>
+</footer>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+let currentSlideIndex = {
+    favorites: 0,
+    favoritesDesktop: 0,
+    celebrations: 0
+};
+
+let autoScrollIntervals = {};
+
+function changeSlide(slideshow, direction) {
+    const track = document.getElementById(`${slideshow}Track`);
+    if (!track) return; // Exit if track doesn't exist
+    
+    const slides = track.querySelectorAll('.slide');
+    const dotsContainer = track.parentElement.querySelector('.slideshow-dots');
+    const dots = dotsContainer ? dotsContainer.querySelectorAll('.dot') : [];
+    
+    currentSlideIndex[slideshow] += direction;
+    
+    if (currentSlideIndex[slideshow] >= slides.length) {
+        currentSlideIndex[slideshow] = 0;
+    }
+    if (currentSlideIndex[slideshow] < 0) {
+        currentSlideIndex[slideshow] = slides.length - 1;
+    }
+    
+    track.style.transform = `translateX(-${currentSlideIndex[slideshow] * 100}%)`;
+    
+    // Update dots if they exist
+    if (dots.length > 0) {
+        dots.forEach(dot => dot.classList.remove('active'));
+        if (dots[currentSlideIndex[slideshow]]) {
+            dots[currentSlideIndex[slideshow]].classList.add('active');
+        }
+    }
+}
+
+function currentSlide(slideshow, index) {
+    const track = document.getElementById(`${slideshow}Track`);
+    if (!track) return; // Exit if track doesn't exist
+    
+    const dotsContainer = track.parentElement.querySelector('.slideshow-dots');
+    const dots = dotsContainer ? dotsContainer.querySelectorAll('.dot') : [];
+    
+    currentSlideIndex[slideshow] = index - 1;
+    track.style.transform = `translateX(-${currentSlideIndex[slideshow] * 100}%)`;
+    
+    // Update dots
+    if (dots.length > 0) {
+        dots.forEach(dot => dot.classList.remove('active'));
+        if (dots[currentSlideIndex[slideshow]]) {
+            dots[currentSlideIndex[slideshow]].classList.add('active');
+        }
+    }
+
+    // Reset auto-scroll when user manually changes slide
+    if (autoScrollIntervals[slideshow]) {
+        clearInterval(autoScrollIntervals[slideshow]);
+        startAutoScroll(slideshow);
+    }
+}
+
+function startAutoScroll(slideshow) {
+    const track = document.getElementById(`${slideshow}Track`);
+    if (!track) return; // Don't start auto-scroll if track doesn't exist
+    
+    const intervalTime = slideshow === 'favorites' || slideshow === 'favoritesDesktop' ? 4000 : 5000;
+    
+    autoScrollIntervals[slideshow] = setInterval(() => {
+        changeSlide(slideshow, 1);
+    }, intervalTime);
+}
+
+// Start auto-scroll for all slideshows that exist
+document.addEventListener('DOMContentLoaded', () => {
+    // Check which slideshows exist and start them
+    if (document.getElementById('favoritesTrack')) {
+        startAutoScroll('favorites');
+    }
+    if (document.getElementById('favoritesTrackDesktop')) {
+        startAutoScroll('favoritesDesktop');
+    }
+    if (document.getElementById('celebrationsTrack')) {
+        startAutoScroll('celebrations');
+    }
+    
+    // Ensure all slideshows start at first slide
+    Object.keys(currentSlideIndex).forEach(slideshow => {
+        const track = document.getElementById(`${slideshow}Track`);
+        if (track) {
+            currentSlide(slideshow, 1);
+        }
+    });
+});
+
+// Pause auto-scroll on hover
+document.querySelectorAll('.slideshow-container').forEach(container => {
+    const track = container.querySelector('[id$="Track"]');
+    if (!track) return;
+    
+    const slideshow = track.id.replace('Track', '');
+    
+    container.addEventListener('mouseenter', () => {
+        if (autoScrollIntervals[slideshow]) {
+            clearInterval(autoScrollIntervals[slideshow]);
+        }
+    });
+    
+    container.addEventListener('mouseleave', () => {
+        startAutoScroll(slideshow);
+    });
+});
+
+// Menu images rotation with original card structure
+function rotateMenuImages() {
+    const cards = document.querySelectorAll('.menu-image-card img');
+    
+    if (cards.length >= 3) {
+        // Store current images
+        const temp = cards[0].src;
+        cards[0].src = cards[1].src;
+        cards[1].src = cards[2].src;
+        cards[2].src = temp;
+    }
+}
+
+// Auto-rotate menu images every 4 seconds
+setInterval(rotateMenuImages, 4000);
+
+// Navigation scroll effect
+window.addEventListener('scroll', () => {
+    const navbar = document.getElementById('navbar');
+    if (window.scrollY > 100) {
+        navbar.classList.add('scrolled');
+    } else {
+        navbar.classList.remove('scrolled');
+    }
+});
+
+// Mobile menu toggle
+const menuToggle = document.getElementById('menuToggle');
+const navMenu = document.getElementById('navMenu');
+
+if (menuToggle && navMenu) {
+    menuToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        navMenu.classList.toggle('active');
+        console.log('Menu toggled:', navMenu.classList.contains('active')); // Debug log
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!navMenu.contains(e.target) && !menuToggle.contains(e.target)) {
+            navMenu.classList.remove('active');
+        }
+    });
+
+    // Close menu when clicking on a link
+    navMenu.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') {
+            navMenu.classList.remove('active');
+        }
+    });
+}
+
+// Floating action button functions
+function handleCall() {
+    const phoneNumber = '+2349123456789';
+    
+    if (navigator.userAgent.match(/iPhone|iPad|iPod|Android/i)) {
+        window.location.href = `tel:${phoneNumber}`;
+    } else {
+        navigator.clipboard.writeText(phoneNumber.replace('+', '')).then(() => {
+            showToast('Phone number copied: ' + phoneNumber);
+        }).catch(() => {
+            showToast('Call us at: ' + phoneNumber);
+        });
+    }
+}
+
+function scrollToMenu() {
+    // Navigate to customer menu page instead of scrolling
+    window.location.href = 'customer_menu.html';
+}
+
+function openWhatsApp() {
+    const phoneNumber = '2349123456789';
+    const message = encodeURIComponent('Hello! I would like to make a reservation at Brioche & Brew.');
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${message}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+function showToast(message) {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+
+// Smooth scrolling for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const targetId = this.getAttribute('href').substring(1);
+        const target = document.getElementById(targetId);
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Add click handlers for celebration cards
+document.querySelectorAll('.book-celebration-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showToast('Redirecting to celebration booking...');
+        setTimeout(() => {
+            window.location.href = 'eventbooking.html';
+        }, 1000);
+    });
+});
+
+// Add click handlers for menu and order buttons
+document.querySelectorAll('.view-menu-btn, .order-now-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => {
+        e.preventDefault();
+
+        // Show toast
+        showToast('Opening menu...');
+
+        // Redirect after short delay (so toast is visible)
+        setTimeout(() => {
+            window.location.href = 'customer_menu.html';
+        }, 1000); // 1 second delay
+    });
+});
+
+
+// Touch event handling for better mobile interaction
+let touchStartY = 0;
+
+document.addEventListener('touchstart', (e) => {
+    touchStartY = e.touches[0].clientY;
+});
+
+document.addEventListener('touchend', (e) => {
+    const touchEndY = e.changedTouches[0].clientY;
+    const diff = touchStartY - touchEndY;
+    
+    // Minimal scroll threshold to prevent accidental triggers
+    if (Math.abs(diff) < 10) return;
+});
+
+// Prevent horizontal scrolling issues - Fixed for mobile
+document.addEventListener('touchmove', (e) => {
+    const target = e.target.closest('.slideshow-container, .menu-images-container, .reviews-section');
+    if (!target) {
+        return;
+    }
+}, { passive: true });
+
+// Intersection Observer for performance optimization
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '50px'
+};
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
+        }
+    });
+}, observerOptions);
+
+// Observe sections for smooth loading
+document.querySelectorAll('.section').forEach(section => {
+    observer.observe(section);
+});
+    </script>
+</body>
+</html>

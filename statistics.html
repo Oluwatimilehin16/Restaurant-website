@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistics - Brioche & Brew</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+     <link href="css/statistics.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo-section">
+            <div class="logo-placeholder">
+                <img src="./image/logo.png" alt="Brioche & Brew Logo">
+            </div>
+            <div class="brand-name">Brioche & Brew</div>
+            <div class="brand-tagline">Order Management</div>
+        </div>
+
+        <div class="sidebar-nav">
+            <div class="nav-item" onclick="window.location.href='orders_dashboard.html'">
+                <span class="nav-icon">📊</span>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" onclick="window.location.href='menu_management.html'">
+                <span class="nav-icon">🍽️</span>
+                <span>Manage Menu</span>
+            </div>
+            <div class="nav-item" onclick="window.location.href='menucustomize.html'">
+                <span class="nav-icon">➕</span>
+                <span>Add New Item</span>
+            </div>
+            <div class="nav-item active">
+                <span class="nav-icon">📈</span>
+                <span>Statistics</span>
+            </div>
+             <div class="nav-item" onclick="window.location.href='admin_reservations.html'">
+                <span class="nav-icon">📅</span>
+                <span>Reservations</span>
+            </div>
+        </div>
+
+        <div class="sidebar-footer">
+            © 2024 Brioche & Brew<br>All rights reserved
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Top Header -->
+        <div class="top-header">
+            <h1 class="page-title">📊 Business Statistics</h1>
+            <div class="header-actions">
+                <button class="action-btn" onclick="loadStatistics()">
+                    🔄 Refresh Data
+                </button>
+            </div>
+        </div>
+
+        <!-- Content Area -->
+        <div class="content-area">
+            <!-- Time Filter -->
+            <div class="time-filter">
+                <button class="time-filter-btn active" onclick="filterByPeriod('today')">Today</button>
+                <button class="time-filter-btn" onclick="filterByPeriod('week')">This Week</button>
+                <button class="time-filter-btn" onclick="filterByPeriod('month')">This Month</button>
+                <button class="time-filter-btn" onclick="filterByPeriod('all')">All Time</button>
+            </div>
+
+            <!-- Charts Grid -->
+            <div class="charts-grid">
+                <!-- Payment Methods Pie Chart -->
+                <div class="chart-container">
+                    <h2 class="section-title">💳 Payment Methods Distribution</h2>
+                    <div class="chart-wrapper small">
+                        <canvas id="paymentChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Order Types Pie Chart -->
+                <div class="chart-container">
+                    <h2 class="section-title">📦 Order Types</h2>
+                    <div class="chart-wrapper small">
+                        <canvas id="orderTypesChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Peak Hours Bar Chart -->
+                <div class="chart-container full-width">
+                    <h2 class="section-title">⏰ Peak Hours Analysis</h2>
+                    <div class="chart-wrapper large">
+                        <canvas id="peakHoursChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Popular Items Bar Chart -->
+                <div class="chart-container full-width">
+                    <h2 class="section-title">🔥 Top 10 Most Ordered Items</h2>
+                    <div class="chart-wrapper">
+                        <canvas id="popularItemsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Detailed Table -->
+                <div class="chart-container full-width">
+                    <h2 class="section-title">📋 Detailed Items Breakdown</h2>
+                    <div id="itemsTableContainer">
+                        <div class="loading">
+                            <div class="spinner"></div>
+                            <span>Loading data...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPeriod = 'today';
+        let allOrders = [];
+        let charts = {};
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStatistics();
+        });
+
+        async function loadStatistics() {
+            try {
+                const response = await fetch('get_orders.php?period=all');
+                const data = await response.json();
+                
+                if (data.success && data.orders) {
+                    allOrders = data.orders;
+                    processAndDisplayStats();
+                } else {
+                    showEmptyState();
+                }
+            } catch (error) {
+                console.error('Error loading statistics:', error);
+                showEmptyState();
+            }
+        }
+
+        function filterByPeriod(period) {
+            currentPeriod = period;
+            
+            document.querySelectorAll('.time-filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            processAndDisplayStats();
+        }
+
+        function filterOrdersByPeriod(orders) {
+            const now = new Date();
+            
+            return orders.filter(order => {
+                const orderDate = new Date(order.timestamp);
+                
+                switch(currentPeriod) {
+                    case 'today':
+                        return orderDate.toDateString() === now.toDateString();
+                    case 'week':
+                        const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+                        return orderDate >= weekAgo;
+                    case 'month':
+                        return orderDate.getMonth() === now.getMonth() && 
+                               orderDate.getFullYear() === now.getFullYear();
+                    case 'all':
+                    default:
+                        return true;
+                }
+            });
+        }
+
+        function processAndDisplayStats() {
+            const filteredOrders = filterOrdersByPeriod(allOrders);
+            
+            // Process and display all charts
+            createPaymentChart(filteredOrders);
+            createOrderTypesChart(filteredOrders);
+            createPeakHoursChart(filteredOrders);
+            createPopularItemsChart(filteredOrders);
+            createItemsTable(filteredOrders);
+        }
+
+        function createPaymentChart(orders) {
+            const completedOrders = orders.filter(o => o.status === 'completed');
+            const methods = { cash: 0, card: 0, transfer: 0 };
+
+            completedOrders.forEach(order => {
+                const method = (order.paymentMethod || order.payment_method || 'cash').toLowerCase();
+                if (methods[method] !== undefined) {
+                    methods[method]++;
+                } else {
+                    methods.cash++;
+                }
+            });
+
+            if (charts.payment) charts.payment.destroy();
+
+            const ctx = document.getElementById('paymentChart').getContext('2d');
+            charts.payment = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Cash 💵', 'Card 💳', 'Bank Transfer 🏦'],
+                    datasets: [{
+                        data: [methods.cash, methods.card, methods.transfer],
+                        backgroundColor: [
+                            '#28a745',
+                            '#007bff',
+                            '#ffc107'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 13, weight: '600' },
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return `${context.label}: ${context.parsed} orders (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createOrderTypesChart(orders) {
+            const types = { dinein: 0, delivery: 0 };
+
+            orders.forEach(order => {
+                const type = order.type || 'dinein';
+                if (types[type] !== undefined) {
+                    types[type]++;
+                }
+            });
+
+            if (charts.orderTypes) charts.orderTypes.destroy();
+
+            const ctx = document.getElementById('orderTypesChart').getContext('2d');
+            charts.orderTypes = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Dine-In 🍽️', 'Delivery 🚗'],
+                    datasets: [{
+                        data: [types.dinein, types.delivery],
+                        backgroundColor: [
+                           '#D32F2F',  // Bright red for Dine-In
+                           '#0288D1'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#fff'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 13, weight: '600' },
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((context.parsed / total) * 100).toFixed(1);
+                                    return `${context.label}: ${context.parsed} orders (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPeakHoursChart(orders) {
+            const hours = Array(24).fill(0);
+
+            orders.forEach(order => {
+                const date = new Date(order.timestamp);
+                const hour = date.getHours();
+                hours[hour]++;
+            });
+
+            const labels = hours.map((_, i) => {
+                if (i === 0) return '12 AM';
+                if (i < 12) return `${i} AM`;
+                if (i === 12) return '12 PM';
+                return `${i - 12} PM`;
+            });
+
+            if (charts.peakHours) charts.peakHours.destroy();
+
+            const ctx = document.getElementById('peakHoursChart').getContext('2d');
+            charts.peakHours = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Number of Orders',
+                        data: hours,
+                        backgroundColor: 'rgba(139, 0, 0, 0.8)',
+                        borderColor: '#8B0000',
+                        borderWidth: 2,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                font: { size: 12, weight: '600' }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                font: { size: 11, weight: '600' }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createPopularItemsChart(orders) {
+            const itemStats = {};
+
+            orders.forEach(order => {
+                if (order.items && Array.isArray(order.items)) {
+                    order.items.forEach(item => {
+                        const key = item.name;
+                        if (!itemStats[key]) {
+                            itemStats[key] = { name: item.name, quantity: 0 };
+                        }
+                        itemStats[key].quantity += parseInt(item.quantity || 1);
+                    });
+                }
+            });
+
+            const sortedItems = Object.values(itemStats)
+                .sort((a, b) => b.quantity - a.quantity)
+                .slice(0, 10);
+
+            if (charts.popularItems) charts.popularItems.destroy();
+
+            const ctx = document.getElementById('popularItemsChart').getContext('2d');
+            charts.popularItems = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sortedItems.map(item => item.name),
+                    datasets: [{
+                        label: 'Times Ordered',
+                        data: sortedItems.map(item => item.quantity),
+                        backgroundColor: [
+                            '#8B0000', '#A52A2A', '#CD5C5C', '#DC143C', '#F08080',
+                            '#FA8072', '#E9967A', '#FF6347', '#FF7F50', '#FFA07A'
+                        ],
+                        borderColor: '#8B0000',
+                        borderWidth: 2,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            beginAtZero: true,
+                            ticks: {
+                                stepSize: 1,
+                                font: { size: 12, weight: '600' }
+                            },
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                font: { size: 12, weight: '600' }
+                            },
+                            grid: {
+                                display: false
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 12,
+                            titleFont: { size: 14, weight: 'bold' },
+                            bodyFont: { size: 13 }
+                        }
+                    }
+                }
+            });
+        }
+
+        function createItemsTable(orders) {
+            const itemStats = {};
+
+            orders.forEach(order => {
+                if (order.items && Array.isArray(order.items)) {
+                    order.items.forEach(item => {
+                        const key = item.name;
+                        if (!itemStats[key]) {
+                            itemStats[key] = {
+                                name: item.name,
+                                category: item.category || 'Uncategorized',
+                                quantity: 0,
+                                revenue: 0
+                            };
+                        }
+                        itemStats[key].quantity += parseInt(item.quantity || 1);
+                        itemStats[key].revenue += parseFloat(item.price || 0) * parseInt(item.quantity || 1);
+                    });
+                }
+            });
+
+            const sortedItems = Object.values(itemStats)
+                .sort((a, b) => b.quantity - a.quantity);
+
+            const container = document.getElementById('itemsTableContainer');
+            
+            if (sortedItems.length === 0) {
+                container.innerHTML = '<div class="empty-state"><div class="empty-icon">🍽️</div><p>No items data available</p></div>';
+                return;
+            }
+
+            container.innerHTML = `
+                <table class="popular-items-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Item Name</th>
+                            <th>Category</th>
+                            <th>Quantity Sold</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${sortedItems.map((item, index) => `
+                            <tr>
+                                <td><span class="rank-badge">${index + 1}</span></td>
+                                <td>
+                                    <div class="item-name-cell">${item.name}</div>
+                                </td>
+                                <td>
+                                    <div class="item-category">${item.category}</div>
+                                </td>
+                                <td class="quantity-cell">${item.quantity}</td>
+                                <td class="revenue-cell">₦${item.revenue.toLocaleString()}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+
+        function showEmptyState() {
+            document.querySelectorAll('.chart-wrapper, #itemsTableContainer').forEach(el => {
+                el.innerHTML = '<div class="empty-state"><div class="empty-icon">📊</div><p>No data available</p></div>';
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menu Item - Brioche & Brew</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: #F9F5EC;
+            color: #333;
+            padding-bottom: 100px;
+        }
+
+        .header {
+            background: #8B0000;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 1.8rem;
+            font-family: 'Brush Script MT', cursive;
+            font-style: italic;
+        }
+
+        .item-image-full {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .item-details {
+            background: white;
+            padding: 25px;
+            margin: -30px 20px 20px 20px;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .item-header {
+            margin-bottom: 20px;
+        }
+
+        .item-name {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 10px;
+        }
+
+        .item-price {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #8B0000;
+            margin-bottom: 15px;
+        }
+
+        .item-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .meta-icon {
+            font-size: 1.2rem;
+        }
+
+        .dietary-tags {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .dietary-tag {
+            background: #F0F0F0;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #8B0000;
+        }
+
+        .description-text {
+            color: #444;
+            line-height: 1.8;
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+
+        .special-features {
+            margin-bottom: 30px;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .feature-list li:before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #8B0000;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .customization-section {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px;
+            border: 1px solid #E0E0E0;
+        }
+
+        .customization-group {
+            margin-bottom: 25px;
+        }
+
+        .group-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #000;
+        }
+
+        .group-subtitle {
+            font-size: 0.85rem;
+            color: #999;
+            margin-bottom: 15px;
+        }
+
+        .option-item {
+            display: flex;
+            align-items: center;
+            padding: 14px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .option-item:hover {
+            background: #fafafa;
+        }
+
+        .option-item:last-child {
+            border-bottom: none;
+        }
+
+        .option-radio,
+        .option-checkbox {
+            width: 22px;
+            height: 22px;
+            margin-right: 12px;
+            accent-color: #8B0000;
+            cursor: pointer;
+        }
+
+        .option-label {
+            flex: 1;
+            font-size: 0.95rem;
+            color: #333;
+            cursor: pointer;
+        }
+
+        .option-price {
+            color: #8B0000;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .default-badge {
+            background: #28a745;
+            color: white;
+            font-size: 0.7rem;
+            padding: 3px 8px;
+            border-radius: 10px;
+            margin-left: 8px;
+        }
+
+        .action-buttons {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 15px 20px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 15px;
+            z-index: 99;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 16px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #8B0000;
+            border: 2px solid #8B0000;
+        }
+
+        .btn-secondary:hover {
+            background: #f9f9f9;
+        }
+
+        .btn-primary {
+            background: #8B0000;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #A0522D;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            color: #333;
+            font-size: 1.1rem;
+        }
+
+        .error-message {
+            text-align: center;
+            padding: 60px 20px;
+            color: #dc3545;
+        }
+
+        @media (min-width: 768px) {
+            .item-details {
+                max-width: 800px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .customization-section {
+                max-width: 800px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+
+            .action-buttons {
+                max-width: 800px;
+                left: 50%;
+                transform: translateX(-50%);
+                border-radius: 20px 20px 0 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <button class="back-btn" onclick="goBack()">←</button>
+        <div class="header-title">Menu Item</div>
+    </div>
+
+    <div id="itemContent">
+        <div class="loading">Loading item details...</div>
+    </div>
+
+    <script>
+        let currentItem = null;
+        let selectedOptions = {};
+        let autoScroll = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const itemId = urlParams.get('id');
+            autoScroll = urlParams.get('customize') === 'true';
+            
+            if (itemId) {
+                loadItemDetails(itemId);
+            } else {
+                document.getElementById('itemContent').innerHTML = `
+                    <div class="error-message">Invalid item ID</div>
+                `;
+            }
+        });
+
+        async function loadItemDetails(itemId) {
+            try {
+                const response = await fetch(`get_menu_item.php?id=${itemId}`);
+                const data = await response.json();
+
+                if (data.success && data.item) {
+                    currentItem = data.item;
+                    displayItemDetails(data.item);
+                    
+                    if (autoScroll && data.item.customizations.length > 0) {
+                        setTimeout(() => {
+                            document.querySelector('.customization-section')?.scrollIntoView({ 
+                                behavior: 'smooth',
+                                block: 'start'
+                            });
+                        }, 500);
+                    }
+                } else {
+                    document.getElementById('itemContent').innerHTML = `
+                        <div class="error-message">Item not found</div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error loading item:', error);
+                document.getElementById('itemContent').innerHTML = `
+                    <div class="error-message">Error loading item details. Please try again.</div>
+                `;
+            }
+        }
+
+        function displayItemDetails(item) {
+            let html = '';
+
+            if (item.imagePath) {
+                html += `<img src="${item.imagePath}" alt="${item.itemName}" class="item-image-full">`;
+            }
+
+            html += `
+                <div class="item-details">
+                    <div class="item-header">
+                        <div class="item-name">${item.itemName}</div>
+                        <div class="item-price">₦${item.basePrice.toLocaleString()}</div>
+                    </div>
+            `;
+
+            if (item.prepTime || item.servingSize) {
+                html += '<div class="item-meta">';
+                if (item.prepTime) {
+                    html += `
+                        <div class="meta-item">
+                            <span class="meta-icon">⏱️</span>
+                            <span>${item.prepTime} mins</span>
+                        </div>
+                    `;
+                }
+                if (item.servingSize) {
+                    html += `
+                        <div class="meta-item">
+                            <span class="meta-icon">🍽️</span>
+                            <span>${item.servingSize}</span>
+                        </div>
+                    `;
+                }
+                html += '</div>';
+            }
+
+            if (item.dietary && item.dietary.length > 0) {
+                html += '<div class="dietary-tags">';
+                const dietaryIcons = {
+                    'vegetarian': '🥬',
+                    'vegan': '🌱',
+                    'gluten_free': '🌾',
+                    'dairy_free': '🥛',
+                    'nut_free': '🥜',
+                    'spicy': '🌶️'
+                };
+                const dietaryLabels = {
+                    'vegetarian': 'Vegetarian',
+                    'vegan': 'Vegan',
+                    'gluten_free': 'Gluten Free',
+                    'dairy_free': 'Dairy Free',
+                    'nut_free': 'Nut Free',
+                    'spicy': 'Spicy'
+                };
+                item.dietary.forEach(diet => {
+                    html += `
+                        <div class="dietary-tag">
+                            ${dietaryIcons[diet] || ''} ${dietaryLabels[diet] || diet}
+                        </div>
+                    `;
+                });
+                html += '</div>';
+            }
+
+            if (item.fullDescription) {
+                html += `
+                    <div class="section-title">About This Dish</div>
+                    <div class="description-text">${item.fullDescription}</div>
+                `;
+            }
+
+            if (item.specialFeatures && item.specialFeatures.length > 0) {
+                html += `
+                    <div class="special-features">
+                        <div class="section-title">What Makes It Special</div>
+                        <ul class="feature-list">
+                `;
+                item.specialFeatures.forEach(feature => {
+                    html += `<li>${feature}</li>`;
+                });
+                html += `
+                        </ul>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+
+            if (item.customizations && item.customizations.length > 0) {
+                html += '<div class="customization-section">';
+                html += '<div class="section-title">Customize Your Order</div>';
+                
+                item.customizations.forEach((group, groupIndex) => {
+                    const inputType = group.multiple ? 'checkbox' : 'radio';
+                    const inputName = `group_${groupIndex}`;
+                    const requiredText = group.required ? '(Required)' : '(Optional)';
+
+                    html += `
+                        <div class="customization-group">
+                            <div class="group-title">${group.name}</div>
+                            <div class="group-subtitle">${requiredText}</div>
+                    `;
+
+                    group.options.forEach((option, optionIndex) => {
+                        const optionId = `option_${groupIndex}_${optionIndex}`;
+                        const priceText = option.price > 0 ? `+₦${option.price.toLocaleString()}` : '';
+                        const isDefault = option.isDefault;
+                        const checkedAttr = isDefault ? 'checked' : '';
+
+                        html += `
+                            <label class="option-item" for="${optionId}">
+                                <input type="${inputType}" 
+                                       name="${inputName}" 
+                                       id="${optionId}" 
+                                       class="option-${inputType}"
+                                       value="${option.name}"
+                                       data-price="${option.price}"
+                                       data-group="${groupIndex}"
+                                       ${checkedAttr}
+                                       onchange="updatePrice()">
+                                <span class="option-label">
+                                    ${option.name}
+                                    ${isDefault ? '<span class="default-badge">Classic</span>' : ''}
+                                </span>
+                                ${priceText ? `<span class="option-price">${priceText}</span>` : ''}
+                            </label>
+                        `;
+                    });
+
+                    html += '</div>';
+                });
+
+                html += '</div>';
+            }
+
+            html += `
+                <div class="action-buttons">
+                    <button class="btn btn-secondary" onclick="quickAddClassic()">Quick Add Classic</button>
+                    <button class="btn btn-primary" onclick="addToCart()">Add to Cart</button>
+                </div>
+            `;
+
+            document.getElementById('itemContent').innerHTML = html;
+        }
+
+        function updatePrice() {
+            if (!currentItem) return;
+
+            let totalPrice = currentItem.basePrice;
+            
+            document.querySelectorAll('input[type="radio"]:checked, input[type="checkbox"]:checked').forEach(input => {
+                const price = parseFloat(input.dataset.price) || 0;
+                totalPrice += price;
+            });
+
+            const priceElement = document.querySelector('.item-price');
+            if (priceElement) {
+                priceElement.textContent = `₦${totalPrice.toLocaleString()}`;
+            }
+        }
+
+        function quickAddClassic() {
+            document.querySelectorAll('input[type="radio"]').forEach(input => {
+                input.checked = false;
+            });
+            
+            document.querySelectorAll('.default-badge').forEach(badge => {
+                const label = badge.closest('.option-item');
+                const input = label.querySelector('input');
+                if (input) {
+                    input.checked = true;
+                }
+            });
+
+            updatePrice();
+            addToCart();
+        }
+
+        function addToCart() {
+            if (!currentItem) return;
+
+            const selectedCustomizations = [];
+            
+            currentItem.customizations.forEach((group, groupIndex) => {
+                const inputs = document.querySelectorAll(`input[data-group="${groupIndex}"]:checked`);
+                const selections = [];
+                
+                inputs.forEach(input => {
+                    selections.push({
+                        name: input.value,
+                        price: parseFloat(input.dataset.price) || 0
+                    });
+                });
+
+                if (selections.length > 0) {
+                    selectedCustomizations.push({
+                        groupName: group.name,
+                        selections: selections
+                    });
+                }
+            });
+
+            const cartItem = {
+                id: currentItem.id,
+                name: currentItem.itemName,
+                basePrice: currentItem.basePrice,
+                customizations: selectedCustomizations,
+                image: currentItem.imagePath
+            };
+
+            let cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            cart.push(cartItem);
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            alert('Item added to cart!');
+            goBack();
+        }
+
+        function goBack() {
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

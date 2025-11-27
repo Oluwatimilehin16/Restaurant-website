@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Our Menu - Brioche & Brew</title>
+     <link rel="stylesheet" href="css/customer_menu.css">
+</head>
+<body>
+    <div class="menu-header">
+        <div class="header-top">
+            <a href="index.html" class="back-arrow">←</a>
+            <div class="logo-circle">
+                <img src="./image/logo.png" alt="Brioche & Brew Logo">
+            </div>
+            <div class="header-right">
+               <button class="cart-icon-wrapper" onclick="goToCart()">
+                    <img src="./image/cart.png" alt="Cart" class="cart-icon-img">
+                    <span class="cart-badge" id="cartBadge">0</span>
+                </button>
+                <button class="menu-toggle" onclick="toggleNav()">☰</button>
+            </div>
+        </div>
+        
+        <div class="nav-menu" id="navMenu">
+            <a href="index.html">Home</a>
+            <a href="#reserve">Reserve Table</a>
+            <a href="cart.html">View Cart</a>
+            <a href="#about">About</a>
+            <a href="#contact">Contact</a>
+        </div>
+
+        <div class="header-title">Our Menu</div>
+        
+        <div class="search-box">
+            <img src="./image/search.png" alt="Search" class="search-icon">
+            <input type="text" class="search-input" placeholder="Search our menu..." id="searchInput">
+        </div>
+    </div>
+
+    <div class="category-filters">
+        <button class="filter-btn special-offers-btn" data-category="special-offers">Special Offers</button>
+        <button class="filter-btn active" data-category="">All Items</button>
+        <button class="filter-btn" data-category="breakfast">Breakfast</button>
+        <button class="filter-btn" data-category="sandwiches">Sandwiches</button>
+        <button class="filter-btn" data-category="mains">Mains</button>
+        <button class="filter-btn" data-category="coffee">Coffee</button>
+        <button class="filter-btn" data-category="drinks">Drinks</button>
+        <button class="filter-btn" data-category="Alcohol">Alcohol</button>
+        <button class="filter-btn" data-category="sides">Sides</button>
+        <button class="filter-btn" data-category="bakery">Bakery</button>
+    </div>
+
+    <div class="offers-section" id="offersSection" style="display: none;">
+        <div class="offers-header">
+            <h2>Special Offers</h2>
+            <p>Limited time deals you don't want to miss!</p>
+        </div>
+        
+        <div class="carousel-container">
+            <div class="carousel-track" id="carouselTrack">
+            </div>
+            
+            <div class="carousel-controls">
+                <button class="carousel-btn" onclick="moveCarousel(-1)">‹</button>
+                <button class="carousel-btn" onclick="moveCarousel(1)">›</button>
+            </div>
+        </div>
+        
+        <div class="carousel-dots" id="carouselDots"></div>
+    </div>
+
+    <div class="menu-container" id="menuContainer">
+        <div class="menu-section-header">
+            <h2>Our Menu</h2>
+            <p>Freshly prepared with love</p>
+        </div>
+        <div class="loading">Loading menu...</div>
+    </div>
+
+    <button class="scroll-to-top" id="scrollToTop" onclick="scrollToTop()">↑</button>
+
+    <div class="modal-overlay" id="detailModal" onclick="closeOnOverlay(event)">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeDetailModal()">×</button>
+            <img id="modalImage" class="modal-image" alt="">
+            <div class="modal-body">
+                <h2 class="modal-title" id="modalTitle"></h2>
+                <div class="modal-price" id="modalPrice"></div>
+                <p class="modal-description" id="modalDescription"></p>
+                
+                <div class="features-section" id="featuresSection" style="display: none;">
+                    <h3 class="features-title">What Makes It Special</h3>
+                    <div id="featuresList"></div>
+                </div>
+
+                <div id="customizationsContainer"></div>
+
+                <div class="current-price-display">
+                    <div class="current-price-label">Total Price</div>
+                    <div class="current-price-value" id="currentTotalPrice">₦0</div>
+                </div>
+
+                <div class="quantity-selector">
+                    <button class="quantity-btn" onclick="changeQuantity(-1)">-</button>
+                    <span class="quantity-display" id="quantityDisplay">1</span>
+                    <button class="quantity-btn" onclick="changeQuantity(1)">+</button>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="resetCustomizations()">Reset</button>
+                    <button class="btn btn-primary" onclick="addToCartFromModal()">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+        let menuItems = [];
+        let currentItem = null;
+        let selectedCustomizations = {};
+        let currentQuantity = 1;
+        let currentSlide = 0;
+        let offers = [];
+        let autoSlideInterval;
+
+        function toggleNav() {
+            const nav = document.getElementById('navMenu');
+            nav.classList.toggle('active');
+        }
+
+        function goToCart() {
+            window.location.href = 'cart.html';
+        }
+
+        document.addEventListener('click', function(e) {
+            const nav = document.getElementById('navMenu');
+            const toggle = document.querySelector('.menu-toggle');
+            if (!nav.contains(e.target) && !toggle.contains(e.target)) {
+                nav.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOffers();
+            loadMenu();
+            setupFilters();
+            setupSearch();
+            updateCartBadge();
+            setupScrollButton();
+        });
+
+        async function loadOffers() {
+            try {
+                const response = await fetch('get_special_offers.php');
+                const data = await response.json();
+
+                if (data.success && data.offers.length > 0) {
+                    offers = data.offers;
+                    displayOffers();
+                    startAutoSlide();
+                    // Show the special offers button only if there are offers
+                    document.querySelector('.special-offers-btn').style.display = 'inline-block';
+                } else {
+                    console.log('No offers to display. Reason:', data.message || 'No active offers');
+                    // Hide the special offers button if no offers
+                    document.querySelector('.special-offers-btn').style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error loading offers:', error);
+                // Hide the special offers button on error
+                document.querySelector('.special-offers-btn').style.display = 'none';
+            }
+        }
+
+        function displayOffers() {
+            const offersSection = document.getElementById('offersSection');
+            const carouselTrack = document.getElementById('carouselTrack');
+            const dotsContainer = document.getElementById('carouselDots');
+
+            offersSection.style.display = 'block';
+
+            let offersHtml = '';
+            let dotsHtml = '';
+
+            offers.forEach((offer, index) => {
+                offersHtml += `
+                    <div class="offer-card">
+                        <img src="${offer.image}" alt="${offer.title}" class="offer-image">
+                        <div class="offer-content">
+                            <div class="offer-badge">${offer.badge}</div>
+                            <h3 class="offer-title">${offer.title}</h3>
+                            <p class="offer-description">${offer.description}</p>
+                            <div class="offer-price">
+                                <span class="original-price">₦${offer.originalPrice.toLocaleString()}</span>
+                                <span class="discounted-price">₦${offer.discountedPrice.toLocaleString()}</span>
+                                <span class="discount-percentage">${offer.discountPercentage}% OFF</span>
+                            </div>
+                            <button class="offer-cta" onclick="scrollToMenuItems()">Order Now</button>
+                        </div>
+                    </div>
+                `;
+
+                dotsHtml += `<div class="dot ${index === 0 ? 'active' : ''}" onclick="goToSlide(${index})"></div>`;
+            });
+
+            carouselTrack.innerHTML = offersHtml;
+            dotsContainer.innerHTML = dotsHtml;
+        }
+
+        function moveCarousel(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) {
+                currentSlide = offers.length - 1;
+            } else if (currentSlide >= offers.length) {
+                currentSlide = 0;
+            }
+            updateCarousel();
+            resetAutoSlide();
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateCarousel();
+            resetAutoSlide();
+        }
+
+        function updateCarousel() {
+            const track = document.getElementById('carouselTrack');
+            const dots = document.querySelectorAll('.dot');
+            track.style.transform = `translateX(-${currentSlide * 100}%)`;
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === currentSlide);
+            });
+        }
+
+        function startAutoSlide() {
+            autoSlideInterval = setInterval(() => {
+                moveCarousel(1);
+            }, 5000);
+        }
+
+        function resetAutoSlide() {
+            clearInterval(autoSlideInterval);
+            startAutoSlide();
+        }
+
+        function setupScrollButton() {
+            window.addEventListener('scroll', () => {
+                const scrollBtn = document.getElementById('scrollToTop');
+                if (window.scrollY > 300) {
+                    scrollBtn.classList.add('visible');
+                } else {
+                    scrollBtn.classList.remove('visible');
+                }
+            });
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function scrollToMenuItems() {
+            const menuContainer = document.getElementById('menuContainer');
+            document.getElementById('offersSection').style.display = 'none';
+            document.getElementById('menuContainer').style.display = 'block';
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            document.querySelector('.filter-btn[data-category=""]').classList.add('active');
+            menuContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function setupFilters() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const category = this.dataset.category;
+                    
+                    if (category === 'special-offers') {
+                        // Show offers section and hide menu
+                        document.getElementById('offersSection').style.display = 'block';
+                        document.getElementById('menuContainer').style.display = 'none';
+                        // Scroll to offers section
+                        document.getElementById('offersSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                    } else {
+                        // Hide offers section and show menu
+                        document.getElementById('offersSection').style.display = 'none';
+                        document.getElementById('menuContainer').style.display = 'block';
+                        filterMenu(category);
+                    }
+                });
+            });
+        }
+
+        function setupSearch() {
+            document.getElementById('searchInput').addEventListener('input', function(e) {
+                const searchTerm = e.target.value.toLowerCase();
+                const filtered = menuItems.filter(item => 
+                    item.itemName.toLowerCase().includes(searchTerm) ||
+                    (item.shortDescription && item.shortDescription.toLowerCase().includes(searchTerm))
+                );
+                displayMenu(filtered);
+            });
+        }
+
+        async function loadMenu() {
+            try {
+                const response = await fetch('get_menu_items.php');
+                const data = await response.json();
+                if (data.success) {
+                    menuItems = data.items;
+                    displayMenu(menuItems);
+                } else {
+                    document.getElementById('menuContainer').innerHTML = '<div class="loading">Failed to load menu items</div>';
+                }
+            } catch (error) {
+                console.error('Error loading menu:', error);
+                document.getElementById('menuContainer').innerHTML = '<div class="loading">Error loading menu. Please refresh the page.</div>';
+            }
+        }
+
+        function filterMenu(category) {
+            if (category === '') {
+                displayMenu(menuItems);
+            } else {
+                const filtered = menuItems.filter(item => item.category === category);
+                displayMenu(filtered);
+            }
+        }
+
+        function displayMenu(items) {
+            const container = document.getElementById('menuContainer');
+            
+            // Keep the header
+            const header = container.querySelector('.menu-section-header');
+            
+            if (items.length === 0) {
+                container.innerHTML = '';
+                if (header) container.appendChild(header);
+                const noItems = document.createElement('div');
+                noItems.className = 'loading';
+                noItems.textContent = 'No items found';
+                container.appendChild(noItems);
+                return;
+            }
+            
+            let html = '';
+            items.forEach(item => {
+                const dietaryTags = item.dietary ? item.dietary.map(d => `<span class="dietary-tag">${d}</span>`).join('') : '';
+                const hasCustomizations = item.customizations && item.customizations.length > 0;
+                html += `
+                    <div class="menu-item">
+                        <div class="item-image-container" onclick="openDetailModal(${item.id})">
+                            <img src="${item.imagePath}" alt="${item.itemName}" class="item-image">
+                            ${item.prepTime ? `<div class="item-badge">${item.prepTime} min</div>` : ''}
+                        </div>
+                        <div class="item-content">
+                            <div class="item-header" onclick="openDetailModal(${item.id})">
+                                <div class="item-name">${item.itemName}</div>
+                                <div class="item-price">₦${item.basePrice.toLocaleString()}</div>
+                            </div>
+                            <div class="item-description" onclick="openDetailModal(${item.id})">${item.shortDescription}</div>
+                            <div class="item-footer">
+                                <div class="dietary-tags">${dietaryTags}</div>
+                                <button class="add-to-cart-btn" onclick="event.stopPropagation(); ${hasCustomizations ? 'openDetailModal(' + item.id + ')' : 'quickAddToCart(' + item.id + ')'}">+</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = '';
+            if (header) container.appendChild(header);
+            
+            // Create a wrapper for menu items
+            const menuGrid = document.createElement('div');
+            menuGrid.className = 'menu-grid';
+            menuGrid.innerHTML = html;
+            container.appendChild(menuGrid);
+        }
+
+        function openDetailModal(itemId) {
+            const item = menuItems.find(i => i.id === itemId);
+            if (!item) return;
+            currentItem = item;
+            selectedCustomizations = {};
+            currentQuantity = 1;
+            document.getElementById('modalImage').src = item.imagePath;
+            document.getElementById('modalTitle').textContent = item.itemName;
+            const priceLabel = item.customizations && item.customizations.length > 0 ? 'Base Price: ' : 'Price: ';
+            document.getElementById('modalPrice').textContent = `${priceLabel}₦${item.basePrice.toLocaleString()}`;
+            document.getElementById('modalDescription').textContent = item.fullDescription;
+            document.getElementById('quantityDisplay').textContent = '1';
+            const featuresSection = document.getElementById('featuresSection');
+            if (item.specialFeatures && item.specialFeatures.length > 0) {
+                const featuresHtml = item.specialFeatures.map(f => `<div class="feature-item">${f}</div>`).join('');
+                document.getElementById('featuresList').innerHTML = featuresHtml;
+                featuresSection.style.display = 'block';
+            } else {
+                featuresSection.style.display = 'none';
+            }
+            const customizationsContainer = document.getElementById('customizationsContainer');
+            if (item.customizations && item.customizations.length > 0) {
+                let customHtml = '';
+                item.customizations.forEach((custom, idx) => {
+                    const inputType = custom.multiple ? 'checkbox' : 'radio';
+                    customHtml += `
+                        <div class="customization-section">
+                            <div class="customization-title">
+                                ${custom.name}
+                                ${custom.required ? '<span class="required-badge">Required</span>' : ''}
+                            </div>
+                            ${custom.options.map((opt, optIdx) => `
+                                <div class="option-item ${opt.isDefault ? 'selected' : ''}" onclick="selectOption(${idx}, ${optIdx}, ${!custom.multiple})">
+                                    <input type="${inputType}" class="option-radio" name="custom_${idx}" id="opt_${idx}_${optIdx}" ${opt.isDefault ? 'checked' : ''}>
+                                    <span class="option-name">${opt.name}</span>
+                                    <span class="option-price">${opt.price > 0 ? '+₦' + opt.price.toLocaleString() : 'Included'}</span>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    if (custom.options.some(o => o.isDefault)) {
+                        const defaultOpts = custom.options.filter(o => o.isDefault);
+                        selectedCustomizations[idx] = custom.multiple ? defaultOpts : [defaultOpts[0]];
+                    }
+                });
+                customizationsContainer.innerHTML = customHtml;
+            } else {
+                customizationsContainer.innerHTML = '';
+            }
+            document.body.style.overflow = 'hidden';
+            updateTotalPrice();
+            document.getElementById('detailModal').classList.add('active');
+        }
+
+        function closeDetailModal() {
+            document.getElementById('detailModal').classList.remove('active');
+            document.body.style.overflow = 'auto';
+            currentItem = null;
+            selectedCustomizations = {};
+            currentQuantity = 1;
+        }
+
+        function closeOnOverlay(event) {
+            if (event.target.id === 'detailModal') closeDetailModal();
+        }
+
+        function selectOption(customIdx, optIdx, isSingleSelect) {
+            const customization = currentItem.customizations[customIdx];
+            const option = customization.options[optIdx];
+            if (isSingleSelect) {
+                selectedCustomizations[customIdx] = [option];
+                const container = document.querySelectorAll('.customization-section')[customIdx];
+                container.querySelectorAll('.option-item').forEach((item, idx) => {
+                    item.classList.toggle('selected', idx === optIdx);
+                    item.querySelector('input').checked = idx === optIdx;
+                });
+            } else {
+                if (!selectedCustomizations[customIdx]) selectedCustomizations[customIdx] = [];
+                const existingIdx = selectedCustomizations[customIdx].findIndex(o => o.name === option.name);
+                const container = document.querySelectorAll('.customization-section')[customIdx];
+                const optionElement = container.querySelectorAll('.option-item')[optIdx];
+                if (existingIdx > -1) {
+                    selectedCustomizations[customIdx].splice(existingIdx, 1);
+                    optionElement.classList.remove('selected');
+                    optionElement.querySelector('input').checked = false;
+                } else {
+                    selectedCustomizations[customIdx].push(option);
+                    optionElement.classList.add('selected');
+                    optionElement.querySelector('input').checked = true;
+                }
+            }
+            updateTotalPrice();
+        }
+
+        function changeQuantity(delta) {
+            currentQuantity = Math.max(1, currentQuantity + delta);
+            document.getElementById('quantityDisplay').textContent = currentQuantity;
+            updateTotalPrice();
+        }
+
+        function updateTotalPrice() {
+            if (!currentItem) return;
+            let totalPrice = currentItem.basePrice;
+            if (currentItem.customizations) {
+                currentItem.customizations.forEach((custom, idx) => {
+                    const selectedOpts = selectedCustomizations[idx] || [];
+                    if (custom.multiple) {
+                        selectedOpts.forEach(opt => { totalPrice += opt.price; });
+                    } else {
+                        if (selectedOpts.length > 0) {
+                            const selectedOpt = selectedOpts[0];
+                            if (selectedOpt.price > 0) totalPrice = totalPrice - currentItem.basePrice + selectedOpt.price;
+                        }
+                    }
+                });
+            }
+            const finalTotal = totalPrice * currentQuantity;
+            document.getElementById('currentTotalPrice').textContent = `₦${finalTotal.toLocaleString()}`;
+        }
+
+        function resetCustomizations() {
+            selectedCustomizations = {};
+            currentQuantity = 1;
+            document.getElementById('quantityDisplay').textContent = '1';
+            if (currentItem && currentItem.customizations) {
+                currentItem.customizations.forEach((custom, idx) => {
+                    if (custom.options.some(o => o.isDefault)) {
+                        const defaultOpts = custom.options.filter(o => o.isDefault);
+                        selectedCustomizations[idx] = custom.multiple ? defaultOpts : [defaultOpts[0]];
+                    }
+                });
+            }
+            updateTotalPrice();
+            document.querySelectorAll('.option-item').forEach(item => {
+                const input = item.querySelector('input');
+                if (input) item.classList.toggle('selected', input.checked);
+            });
+        }
+
+        function quickAddToCart(itemId) {
+            const item = menuItems.find(i => i.id === itemId);
+            if (!item) return;
+            addItemToCart({
+                id: item.id,
+                name: item.itemName,
+                price: item.basePrice,
+                quantity: 1,
+                image: item.imagePath,
+                customizations: []
+            });
+            showToast('Added to cart!');
+        }
+
+        function addToCartFromModal() {
+            if (!currentItem) return;
+            if (currentItem.customizations) {
+                for (let i = 0; i < currentItem.customizations.length; i++) {
+                    const custom = currentItem.customizations[i];
+                    if (custom.required && (!selectedCustomizations[i] || selectedCustomizations[i].length === 0)) {
+                        showToast(`Please select a ${custom.name}`, 'error');
+                        return;
+                    }
+                }
+            }
+            let totalPrice = currentItem.basePrice;
+            const customizationsList = [];
+            if (currentItem.customizations) {
+                currentItem.customizations.forEach((custom, idx) => {
+                    const selectedOpts = selectedCustomizations[idx] || [];
+                    if (custom.multiple) {
+                        selectedOpts.forEach(opt => {
+                            totalPrice += opt.price;
+                            customizationsList.push({ name: opt.name, price: opt.price });
+                        });
+                    } else {
+                        if (selectedOpts.length > 0) {
+                            const selectedOpt = selectedOpts[0];
+                            if (selectedOpt.price > 0) totalPrice = totalPrice - currentItem.basePrice + selectedOpt.price;
+                            customizationsList.push({ name: selectedOpt.name, price: 0 });
+                        }
+                    }
+                });
+            }
+            addItemToCart({
+                id: currentItem.id,
+                name: currentItem.itemName,
+                price: totalPrice,
+                basePrice: currentItem.basePrice,
+                quantity: currentQuantity,
+                image: currentItem.imagePath,
+                customizations: customizationsList
+            });
+            showToast(`Added ${currentQuantity} item(s) to cart!`);
+            closeDetailModal();
+        }
+
+        function addItemToCart(newItem) {
+            let cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+            const customKey = JSON.stringify(newItem.customizations.sort((a, b) => a.name.localeCompare(b.name)));
+            const existingIndex = cart.findIndex(item => 
+                item.id === newItem.id && 
+                JSON.stringify((item.customizations || []).sort((a, b) => a.name.localeCompare(b.name))) === customKey
+            );
+            if (existingIndex > -1) {
+                cart[existingIndex].quantity += newItem.quantity;
+            } else {
+                cart.push(newItem);
+            }
+            sessionStorage.setItem('cart', JSON.stringify(cart));
+            updateCartBadge();
+        }
+
+        function updateCartBadge() {
+            const cart = JSON.parse(sessionStorage.getItem('cart') || '[]');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            document.getElementById('cartBadge').textContent = totalItems;
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.background = type === 'error' ? 'linear-gradient(135deg, #dc3545 0%, #c82333 100%)' : 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

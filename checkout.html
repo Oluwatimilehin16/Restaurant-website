@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Brioche & Brew</title>
+    <link href="css/checkout.css" rel="stylesheet">
+</head>
+<body>
+    <div class="checkout-header">
+        <div class="header-content">
+            <a href="cart.html" class="back-arrow">←</a>
+            <div class="header-title">Checkout</div>
+            <div style="width: 55px;"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="step-indicator">
+            <div class="step active" id="step1">1</div>
+            <div class="step-line"></div>
+            <div class="step" id="step2">2</div>
+            <div class="step-line"></div>
+            <div class="step" id="step3">3</div>
+        </div>
+
+        <!-- Step 1: Service Type Selection -->
+        <div class="checkout-section active" id="serviceTypeSection">
+            <h2 class="section-title">How would you like to receive your order?</h2>
+            <p class="section-description">Choose your preferred service option</p>
+
+            <div class="service-options">
+                <div class="service-card" onclick="selectServiceType('dinein')">
+                    <div class="service-icon">🍽️</div>
+                    <div class="service-title">Dine In</div>
+                    <div class="service-description">
+                        Enjoy your meal at our restaurant. You can request a waiter or pay directly from your table.
+                    </div>
+                </div>
+
+                <div class="service-card" onclick="selectServiceType('delivery')">
+                    <div class="service-icon">🚗</div>
+                    <div class="service-title">Delivery</div>
+                    <div class="service-description">
+                        Get your order delivered to your doorstep. We'll bring it fresh and hot!
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2A: Dine-In Details -->
+        <div class="checkout-section" id="dineinSection">
+            <h2 class="section-title">Dine-In Service</h2>
+            <p class="section-description">Please provide your table information</p>
+
+            <div class="form-card">
+                <div class="form-group">
+                    <label class="form-label">Table Number</label>
+                    <input type="number" id="tableNumber" class="form-input table-number-input" placeholder="Enter your table number" min="1" required>
+                </div>
+
+                <div class="order-summary" id="dineinSummary">
+                    <div class="summary-title">Order Summary</div>
+                    <!-- Cart items will be inserted here -->
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="requestWaiter()">
+                        Request Waiter
+                    </button>
+                    <button class="btn btn-primary" onclick="payAndCallWaiter()">
+                        Pay Now & Call Waiter
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 2B: Delivery Details -->
+        <div class="checkout-section" id="deliverySection">
+            <h2 class="section-title">Delivery Information</h2>
+            <p class="section-description">Where should we deliver your order?</p>
+
+            <div class="form-card">
+                <div class="form-group">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" id="deliveryName" class="form-input" placeholder="Enter your full name" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" id="deliveryPhone" class="form-input" placeholder="080XXXXXXXX" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Delivery Address</label>
+                    <textarea id="deliveryAddress" class="form-textarea" placeholder="Enter your complete delivery address" required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Additional Notes (Optional)</label>
+                    <textarea id="deliveryNotes" class="form-textarea" placeholder="Any special instructions for the driver?" style="min-height: 80px;"></textarea>
+                </div>
+
+                <div class="order-summary" id="deliverySummary">
+                    <div class="summary-title">Order Summary</div>
+                    <!-- Cart items will be inserted here -->
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-secondary" onclick="goBack()">Back</button>
+                    <button class="btn btn-primary" onclick="proceedToPayment()">
+                        Proceed to Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Payment Confirmation -->
+        <div class="checkout-section" id="confirmationSection">
+            <h2 class="section-title">Order Confirmed!</h2>
+            <p class="section-description" id="confirmationMessage"></p>
+
+            <div class="form-card" style="text-align: center;">
+                <div style="font-size: 5rem; margin-bottom: 20px;">✅</div>
+                <div style="font-size: 1.2rem; color: #666; margin-bottom: 30px;" id="orderDetails"></div>
+                <button class="btn btn-primary" onclick="returnToMenu()">
+                    Return to Menu
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast" id="toast"></div>
+
+    <script>
+      // Fixed Checkout JavaScript - Matches HTML IDs correctly
+let cart = [];
+let serviceType = '';
+let currentStep = 1;
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadCart();
+});
+
+function loadCart() {
+    const cartData = sessionStorage.getItem('cart');
+    cart = cartData ? JSON.parse(cartData) : [];
+    
+    if (cart.length === 0) {
+        window.location.href = 'customer_menu.html';
+    }
+}
+
+function selectServiceType(type) {
+    serviceType = type;
+    
+    document.getElementById('serviceTypeSection').classList.remove('active');
+    
+    // FIXED: Using correct IDs from HTML - 'dineInSection' with capital I
+    if (type === 'dinein') {
+        document.getElementById('dineinSection').classList.add('active');
+        displayOrderSummary('dineinSummary');
+    } else if (type === 'delivery') {
+        document.getElementById('deliverySection').classList.add('active');
+        displayOrderSummary('deliverySummary');
+    }
+    
+    updateStepIndicator(2);
+}
+
+function displayOrderSummary(containerId) {
+    const container = document.getElementById(containerId);
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const tax = subtotal * 0.075;
+    const deliveryFee = serviceType === 'delivery' ? 1000 : 0;
+    const total = subtotal + tax + deliveryFee;
+
+    let html = '';
+    cart.forEach(item => {
+        const customizations = item.customizations && item.customizations.length > 0 
+            ? item.customizations.map(c => c.name).join(', ') 
+            : '';
+        
+        html += `
+            <div class="summary-item">
+                <div>
+                    <span>${item.name} x${item.quantity}</span>
+                    ${customizations ? `<br><small style="color: #888;">${customizations}</small>` : ''}
+                </div>
+                <span>₦${(item.price * item.quantity).toLocaleString()}</span>
+            </div>
+        `;
+    });
+
+    html += `
+        <div class="summary-item">
+            <span>Subtotal</span>
+            <span>₦${subtotal.toLocaleString()}</span>
+        </div>
+        <div class="summary-item">
+            <span>Tax (7.5%)</span>
+            <span>₦${tax.toLocaleString()}</span>
+        </div>
+    `;
+
+    if (serviceType === 'delivery') {
+        html += `
+            <div class="summary-item">
+                <span>Delivery Fee</span>
+                <span>₦${deliveryFee.toLocaleString()}</span>
+            </div>
+        `;
+    }
+
+    html += `
+        <div class="summary-item total">
+            <span>Total</span>
+            <span>₦${total.toLocaleString()}</span>
+        </div>
+    `;
+
+    container.innerHTML = html;
+}
+
+async function requestWaiter() {
+    const tableNumber = document.getElementById('tableNumber').value;
+    
+    if (!tableNumber) {
+        showToast('Please enter your table number', 'error');
+        return;
+    }
+
+    showToast('Sending order...');
+
+    try {
+        const orderData = prepareOrderData('dinein', tableNumber, false, 'unpaid', true);
+        
+        console.log('Sending order data:', orderData);
+        
+        const response = await fetch('save_order.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(orderData)
+        });
+
+        const text = await response.text();
+        console.log('Raw response:', text);
+        
+        const result = JSON.parse(text);
+        console.log('Parsed result:', result);
+
+        if (result.success) {
+            showConfirmation(
+                `A waiter will be at Table ${tableNumber} shortly!`,
+                `Order ID: ${result.orderId} | Table ${tableNumber}`
+            );
+            clearCart();
+        } else {
+            showToast('Error saving order: ' + result.message, 'error');
+            console.error('Save failed:', result);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Network error. Please try again.', 'error');
+    }
+}
+
+async function payAndCallWaiter() {
+    const tableNumber = document.getElementById('tableNumber').value;
+    
+    if (!tableNumber) {
+        showToast('Please enter your table number', 'error');
+        return;
+    }
+
+    showToast('Processing payment...');
+    
+    setTimeout(async () => {
+        try {
+            const orderData = prepareOrderData('dinein', tableNumber, false, 'paid', true);
+            
+            console.log('Sending order data:', orderData);
+            
+            const response = await fetch('save_order.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            const text = await response.text();
+            console.log('Raw response:', text);
+            
+            const result = JSON.parse(text);
+            console.log('Parsed result:', result);
+
+            if (result.success) {
+                showConfirmation(
+                    `Payment successful! A waiter will bring your receipt to Table ${tableNumber}`,
+                    `Order ID: ${result.orderId} | Table ${tableNumber}`
+                );
+                clearCart();
+            } else {
+                showToast('Error saving order: ' + result.message, 'error');
+                console.error('Save failed:', result);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Network error. Please try again.', 'error');
+        }
+    }, 2000);
+}
+
+async function proceedToPayment() {
+    const name = document.getElementById('deliveryName').value.trim();
+    const phone = document.getElementById('deliveryPhone').value.trim();
+    const address = document.getElementById('deliveryAddress').value.trim();
+    const notes = document.getElementById('deliveryNotes').value.trim();
+    
+    if (!name || !phone || !address) {
+        showToast('Please fill in all required fields', 'error');
+        return;
+    }
+
+    showToast('Processing payment...');
+    
+    setTimeout(async () => {
+        try {
+            const orderData = prepareOrderData('delivery', null, true, 'paid', false, {
+                name,
+                phone,
+                address,
+                notes
+            });
+            
+            console.log('Sending order data:', orderData);
+            
+            const response = await fetch('save_order.php', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(orderData)
+            });
+
+            const text = await response.text();
+            console.log('Raw response:', text);
+            
+            const result = JSON.parse(text);
+            console.log('Parsed result:', result);
+
+            if (result.success) {
+                showConfirmation(
+                    `Your order is being prepared and will be delivered to ${address}`,
+                    `Order ID: ${result.orderId} | Delivery to: ${name}`
+                );
+                clearCart();
+            } else {
+                showToast('Error saving order: ' + result.message, 'error');
+                console.error('Save failed:', result);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Network error. Please try again.', 'error');
+        }
+    }, 2000);
+}
+
+function prepareOrderData(orderType, tableNumber, includeDeliveryFee, paymentStatus, requestedWaiter, deliveryInfo = null) {
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const tax = subtotal * 0.075;
+    const deliveryFee = includeDeliveryFee ? 1000 : 0;
+    const total = subtotal + tax + deliveryFee;
+
+    const items = cart.map(item => ({
+        name: item.name,
+        quantity: item.quantity,
+        price: item.price,
+        customizations: item.customizations ? item.customizations.map(c => c.name) : []
+    }));
+
+    const orderData = {
+        orderType: orderType,
+        items: items,
+        subtotal: subtotal,
+        tax: tax,
+        deliveryFee: deliveryFee,
+        total: total,
+        paymentStatus: paymentStatus,
+        requestedWaiter: requestedWaiter
+    };
+
+    if (orderType === 'dinein') {
+        orderData.tableNumber = tableNumber;
+    } else if (orderType === 'delivery' && deliveryInfo) {
+        orderData.customerName = deliveryInfo.name;
+        orderData.customerPhone = deliveryInfo.phone;
+        orderData.deliveryAddress = deliveryInfo.address;
+        orderData.deliveryNotes = deliveryInfo.notes;
+    }
+
+    return orderData;
+}
+
+function showConfirmation(message, details) {
+    // FIXED: Using correct ID 'dineInSection' with capital I
+    document.getElementById('dineinSection').classList.remove('active');
+    document.getElementById('deliverySection').classList.remove('active');
+    document.getElementById('confirmationSection').classList.add('active');
+    document.getElementById('confirmationMessage').textContent = message;
+    document.getElementById('orderDetails').textContent = details;
+    updateStepIndicator(3);
+}
+
+function goBack() {
+    document.getElementById('deliverySection').classList.remove('active');
+    // FIXED: Using correct ID 'dineInSection' with capital I
+    document.getElementById('dineinSection').classList.remove('active');
+    document.getElementById('serviceTypeSection').classList.add('active');
+    updateStepIndicator(1);
+}
+
+function updateStepIndicator(step) {
+    currentStep = step;
+    for (let i = 1; i <= 3; i++) {
+        const stepEl = document.getElementById(`step${i}`);
+        if (i <= step) {
+            stepEl.classList.add('active');
+        } else {
+            stepEl.classList.remove('active');
+        }
+    }
+}
+
+function clearCart() {
+    sessionStorage.removeItem('cart');
+}
+
+function returnToMenu() {
+    window.location.href = 'customer_menu.html';
+}
+
+function showToast(message, type = 'success') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+    toast.className = 'toast ' + type;
+    toast.classList.add('show');
+    
+    setTimeout(() => {
+        toast.classList.remove('show');
+    }, 3000);
+}
+    </script>
+</body>
+</html>

@@ -25,21 +25,4 @@ function getDBConnection() {
 
     return $conn;
 }
-
-// Upload directory for images
-define('UPLOAD_DIR', 'uploads/menu_items/');
-
-// Create upload directory if it doesn't exist
-if (!file_exists(UPLOAD_DIR)) {
-    mkdir(UPLOAD_DIR, 0755, true);
-}
-
-// Allowed image types
-define('ALLOWED_TYPES', [
-    'image/jpeg', 'image/jpg', 'image/png',
-    'image/gif', 'image/webp'
-]);
-
-// Max file size (5MB)
-define('MAX_FILE_SIZE', 5 * 1024 * 1024);
 ?>

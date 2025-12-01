@@ -49,24 +49,26 @@ try {
                 throw new Exception("Image file too large. Maximum size is 5MB");
             }
             
-            // Upload directly to Cloudinary from base64
-            $cld = cloudinary();
-            $publicId = 'menu_items/' . time() . '_menu_item';
-            
-            try {
-                $uploadResponse = $cld->uploadApi()->upload($imageData, [
-                    'public_id' => $publicId,
-                    'folder' => 'menu_items',
-                    'overwrite' => true,
-                    'resource_type' => 'image'
-                ]);
-                
-                // Store the Cloudinary URL
-                $imageUrl = $uploadResponse['secure_url'];
-                
-            } catch (Exception $uploadError) {
-                throw new Exception("Cloudinary upload failed: " . $uploadError->getMessage());
-            }
+$cld = cloudinary();
+$publicId = 'menu_items/' . time() . '_menu_item';
+
+try {
+    $uploadResponse = $cld->uploadApi()->upload(
+        "data:image/$imageType;base64,$imageBase64",
+        [
+            'public_id' => $publicId,
+            'folder' => 'menu_items',
+            'overwrite' => true,
+            'resource_type' => 'image'
+        ]
+    );
+
+    $imageUrl = $uploadResponse['secure_url'];
+
+} catch (Exception $uploadError) {
+    throw new Exception("Cloudinary upload failed: " . $uploadError->getMessage());
+}
+
             
         } else {
             throw new Exception("Invalid image data format");

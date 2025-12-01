@@ -1,7 +1,0 @@
-node_modules
-composer.lock
-vendor
-.git
-.gitignore
-uploads
-*.md
